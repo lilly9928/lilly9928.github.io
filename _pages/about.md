@@ -21,11 +21,29 @@ Research Interest
 * Multi Modal 
 * Deep learning approaches to real-world applications
 
-Publications
+<!-- Publications
 ======
   <ul>{% for post in site.publications %}
     {% include archive-single-cv.html %}
-  {% endfor %}</ul>
+  {% endfor %}</ul> -->
+
+
+Publications
+======
+International
+2023
+* Facial Expression Recognition using Visual Transformer with Histogram of Oriented Gradients \\
+Jieun Kim, Ju O Kim, Seungwan Je and Deokwoo Lee* \\
+SPIE 12101, Pattern Recognition and Tracking XXXIII, 121010J \\
+[paper]()
+
+2022
+
+Domestic
+2023
+2022
+2021
+
 
 Education
 ======
@@ -50,15 +68,9 @@ Education
 Honors & Awards
 ======
 * Best Paper Award
-  * Korea Multimedia Society Spring Conference, Korea 
-  * May. 2022
-  * [Download](http://lilly9928.github.io/files/honors1.pdf)
+  * Korea Multimedia Society Spring Conference, Korea, May. 2022 [Download](http://lilly9928.github.io/files/honors1.pdf)
 * 2022년 Female Graduate Student Engineering Research (여대학원생 공학연구팀제 지원사업)
-  * Korea Foundation for Women In Science, Engineering and Technology, Korea 
-  * May. 2022
-  * [Download](http://lilly9928.github.io/files/honors2.pdf)
+  * Korea Foundation for Women In Science, Engineering and Technology, Korea, May. 2022 [Download](http://lilly9928.github.io/files/honors2.pdf)
 * Grand Prize (Deputy Prime Minister and Minister of Education Award)
-  * Education Public Data Analysis and Utilization Contest, Korea 
-  * Dec. 2022
-  * [Download](http://academicpages.github.io/files/honors3.pdf)
+  * Education Public Data Analysis and Utilization Contest, Korea, Dec. 2022 [Download](http://academicpages.github.io/files/honors3.pdf)
 

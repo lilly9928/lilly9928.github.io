@@ -1,7 +1,7 @@
 ---
 title: "Recognition of facial expression using spatial transformation network and convolutional neural network"
 collection: publications
-permalink: /publication/2022-05-27-Recognition_of_facial_expression_using_spatial_transformation_network_and_convolutional_neural_network
+permalink: /publication/2022-05-27-STN_CNN_FER
 excerpt: 'This paper is about the number 1. The number 2 is left for future work.'
 date: 2022-05-27
 venue: 'SPIE 12101, Pattern Recognition and Tracking XXXIII'
