@@ -37,7 +37,6 @@ Research Interest
 
 Publications
 ======
-**International**
 
 **2023**
 
