@@ -11,7 +11,7 @@ redirect_from:
 
 News
 ====
-**CLFW: Contrastive Learning for Facial Expression Recognition in the Wild**, sumitted
+ :pray: **CLFW: Contrastive Learning for Facial Expression Recognition in the Wild**, sumitted
 {: .notice}
 
 
@@ -82,7 +82,7 @@ Education
 ======
 * B.S. in Computer Engineering, Keimyung University,Deagu 2017 - 2021
 * M.S. in Computer Engineering, Keimyung University,Deagu 2021 - 2023
-* Ph.D in  Information Systems, Yonsei University, 2023 - **CURRENT**
+* **Ph.D in  Information Systems, Yonsei University, 2023 - current**
 
 <!-- Projects
 ======
