@@ -30,9 +30,10 @@ Research Interest
 
 Publications
 ======
-International
-2023
-* Facial Expression Recognition using Visual Transformer with Histogram of Oriented Gradients \\
+**International**\\
+**2023**\\
+
+*** Facial Expression Recognition using Visual Transformer with Histogram of Oriented Gradients** \\
 Jieun Kim, Ju O Kim, Seungwan Je and Deokwoo Lee* \\
 SPIE 12101, Pattern Recognition and Tracking XXXIII, 121010J \\
 [paper]()
