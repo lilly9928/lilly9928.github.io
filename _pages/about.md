@@ -17,7 +17,7 @@ News
 
 Biography
 ======
-I am PH.D student at [Yonsei University](https://gsi.yonsei.ac.kr/). I received my M.S and B.S in Computer Engineering from [Keimyung University](https://kmu.ac.kr/uni/main/main.jsp), where I was advised by Prof. Deokwoo Lee. 
+I am PH.D student at [Yonsei University](https://gsi.yonsei.ac.kr/). I received my M.S and B.S in Computer Engineering from [Keimyung University](https://kmu.ac.kr/uni/main/main.jsp), where I was advised by [Prof. Deokwoo Lee](https://sites.google.com/view/dwoolee/deokwoo-lee). 
 
 <!-- My research interest lies in applied machine learning, which aims to develop practical ML solutions for real-world applications. I have covered a wide range of data types (e.g., matrix/tensor, text, graph, time series), tasks (e.g., classification, outcome prediction, anomaly detection, retrieval, data generation), and domains (e.g., healthcare, manufacturing, recommender systems). -->
 
@@ -43,17 +43,17 @@ Publications
 
 * <span style="color:#0B0B61">**Estimation of a Relative Camera Orientation with Few Correspondences using Unsynchronized Viewpoints**</span> \\
 **Jieun Kim** and Deokwoo Lee\\
-MITA2023,(Jul2023)\\
+MITA2023,Jul 2023\\
 [[paper]](http://lilly9928.github.io/files/paper1.pdf)
 
 * <span style="color:#F7819F">**Facial Expression Recognition Robust to Occlusion and to Intra-Similarity Problem using Relevant Subsampling**</span> \\
 **Jieun Kim** and Deokwoo Lee\\
-Sensors, 23(5), 2619, pp. 1-15,(2023)\\
+Sensors, 23(5), 2619, pp. 1-15, 2023\\
 [[paper]](http://lilly9928.github.io/files/paper2.pdf)
 
 * <span style="color:#0B0B61">**Facial Expression Recognition using Visual Transformer with Histogram of Oriented Gradients**</span>\\
 **Jieun Kim**, Ju O Kim, Seungwan Je and Deokwoo Lee \\
-Electronic Imaging, Vol. 7, oral (19 Jan2023)\\
+Electronic Imaging, Vol. 7, oral 19 Jan 2023\\
 [[paper]](http://lilly9928.github.io/files/paper3.pdf)
 
 * <span style="color:#F7819F">**Calibrating a Three-Viewpoints Thermal Camera with Few Correspondences**</span> \\
@@ -65,7 +65,7 @@ Journal of Signal Processing Systems, Vol. 7,(Jan2023)\\
 
 * <span style="color:#0B0B61">**Facial Expression Recognition using Visual Transformer with Histogram of Oriented Gradients**</span> \\
 **Jieun Kim**, Ju O Kim, Seungwan Je and Deokwoo Lee \\
-SPIE 12101, Pattern Recognition and Tracking XXXIII, 121010J,(27 May2022) \\
+SPIE 12101, Pattern Recognition and Tracking XXXIII, 121010J,27 May 2022 \\
 [[paper]](http://lilly9928.github.io/files/paper5.pdf)
 
 
