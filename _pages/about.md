@@ -11,12 +11,15 @@ redirect_from:
 
 News
 ====
+<hr/>
+
  🙏 **CLFW: Contrastive Learning for Facial Expression Recognition in the Wild**, sumitted
 {: .notice}
 
 
 Biography
 ======
+
 I am PH.D student at [Yonsei University](https://gsi.yonsei.ac.kr/). I received my M.S and B.S in Computer Engineering from [Keimyung University](https://kmu.ac.kr/uni/main/main.jsp), where I was advised by [Prof. Deokwoo Lee](https://sites.google.com/view/dwoolee/deokwoo-lee). 
 
 <!-- My research interest lies in applied machine learning, which aims to develop practical ML solutions for real-world applications. I have covered a wide range of data types (e.g., matrix/tensor, text, graph, time series), tasks (e.g., classification, outcome prediction, anomaly detection, retrieval, data generation), and domains (e.g., healthcare, manufacturing, recommender systems). -->
@@ -37,6 +40,7 @@ Research Interest
 
 Publications
 ======
+<hr/>
 
 **2023**
 
@@ -79,6 +83,8 @@ SPIE 12101, Pattern Recognition and Tracking XXXIII, 121010J,27 May 2022 \\
 
 Education
 ======
+<hr/>
+
 * B.S. in Computer Engineering, Keimyung University,Deagu 2017 - 2021
 * M.S. in Computer Engineering, Keimyung University,Deagu 2021 - 2023
 * **Ph.D in  Information Systems, Yonsei University, 2023 - current**
@@ -99,6 +105,8 @@ Education
 
 Honors & Awards
 ======
+<hr/>
+
 * **Best Paper Award** \\
 Korea Multimedia Society Spring Conference, Korea, May. 2022 [[Download]](http://lilly9928.github.io/files/honors1.pdf)
 * **Female Graduate Student Engineering Research (여대학원생 공학연구팀제 지원사업)**\\
