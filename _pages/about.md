@@ -61,7 +61,7 @@ Electronic Imaging, Vol. 7, oral 19 Jan 2023\\
 
 * <span style="color:#F7819F">**Calibrating a Three-Viewpoints Thermal Camera with Few Correspondences**</span> \\
 Ju O Kim, **Jieun Kim** and Deokwoo Lee \\
-Journal of Signal Processing Systems, Vol. 7,(Jan2023)\\
+Journal of Signal Processing Systems, Vol. 7,Jan 2023\\
 [[paper]](http://lilly9928.github.io/files/paper4.pdf)
 
 **2022**
