@@ -9,12 +9,12 @@ redirect_from:
 ---
 {% include base_path %}
 
-News
+<!-- News
 ====
 <hr/>
 
  🙏 **CLFW: Contrastive Learning for Facial Expression Recognition in the Wild**, sumitted
-{: .notice}
+{: .notice} -->
 
 
 Biography
@@ -41,6 +41,11 @@ Research Interest
 Publications
 ======
 <hr/>
+
+**Under Review**
+* <span style="color:#0B0B61">**CLFW: Contrastive Learning for Facial Expression Recognition in the Wild**</span> \\
+**Jieun Kim** and Deokwoo Lee\\
+[[paper]]()
 
 **2023**
 
