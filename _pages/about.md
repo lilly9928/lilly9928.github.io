@@ -1,34 +1,39 @@
 ---
 permalink: /
-title: "CV-Jieun Kim"
+title: " "
 excerpt: "About me"
 author_profile: true
 redirect_from: 
   - /about/
   - /about.html
 ---
-
-<!-- ---
-permalink: /
-title: "CV-Jieun Kim"
-layout: archive
-permalink: /cv/
-author_profile: true
-redirect_from:
-  - /resume
---- -->
-
-
-
 {% include base_path %}
+
+Biography
+======
+* B.S. in Computer Engineering, Keimyung University,Deagu 2017 - 2021
+* M.S. in Computer Engineering, Keimyung University,Deagu 2021 - 2023
+* Ph.D in  Information Systems, Yonsei University, 2023 - current
+
+Research Interest
+======
+* Computer Vision 
+* Multi Modal 
+* Deep learning approaches to real-world applications
+
+Publications
+======
+  <ul>{% for post in site.publications %}
+    {% include archive-single-cv.html %}
+  {% endfor %}</ul>
 
 Education
 ======
-* B.S. in GitHub, GitHub University, 2012
-* M.S. in Jekyll, GitHub University, 2014
-* Ph.D in Version Control Theory, GitHub University, 2018 (expected)
+* B.S. in Computer Engineering, Keimyung University,Deagu 2017 - 2021
+* M.S. in Computer Engineering, Keimyung University,Deagu 2021 - 2023
+* Ph.D in  Information Systems, Yonsei University, 2023 - current
 
-Work experience
+Experience
 ======
 * Summer 2015: Research Assistant
   * Github University
@@ -40,33 +45,8 @@ Work experience
   * Duties included: Merging pull requests
   * Supervisor: Professor Hub
   
-Skills
-======
-* Skill 1
-* Skill 2
-  * Sub-skill 2.1
-  * Sub-skill 2.2
-  * Sub-skill 2.3
-* Skill 3
 
-Publications
-======
-  <ul>{% for post in site.publications %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
-  
-Talks
-======
-  <ul>{% for post in site.talks %}
-    {% include archive-single-talk-cv.html %}
-  {% endfor %}</ul>
-  
-Teaching
-======
-  <ul>{% for post in site.teaching %}
-    {% include archive-single-cv.html %}
-  {% endfor %}</ul>
-  
-Service and leadership
+
+Honors & Awards
 ======
 * Currently signed in to 43 different slack teams
