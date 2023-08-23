@@ -1,7 +1,7 @@
 ---
 layout: archive
 title: "CV"
-permalink: /cv/
+permalink: http://lilly9928.github.io/files/CV_김지은.pdf
 author_profile: true
 redirect_from:
   - /resume
