@@ -28,46 +28,54 @@ Research Interest
   {% endfor %}</ul> -->
 
 
+News
+====
+**Watch out!** You can also add notices by appending `{: .notice}` to a paragraph.
+{: .notice}
+
+
 Publications
 ======
-**International**\\
+International
+------------
 
-**2023**\\
+**2023**
 
-***Estimation of a Relative Camera Orientation with Few Correspondences using Unsynchronized Viewpoints** \\
+* **Estimation of a Relative Camera Orientation with Few Correspondences using Unsynchronized Viewpoints** \\
 **Jieun Kim** and Deokwoo Lee\\
 MITA2023,(Jul2023)\\
-[[paper]]()
+[[paper]](http://lilly9928.github.io/files/paper1.pdf)
 
-***Facial Expression Recognition Robust to Occlusion and to Intra-Similarity Problem using Relevant Subsampling** \\
+* **Facial Expression Recognition Robust to Occlusion and to Intra-Similarity Problem using Relevant Subsampling** \\
 **Jieun Kim** and Deokwoo Lee\\
 Sensors, 23(5), 2619, pp. 1-15,(2023)\\
-[[paper]]()
+[[paper]](http://lilly9928.github.io/files/paper2.pdf)
 
-***Facial Expression Recognition using Visual Transformer with Histogram of Oriented Gradients** \\
+* **Facial Expression Recognition using Visual Transformer with Histogram of Oriented Gradients** \\
 **Jieun Kim**, Ju O Kim, Seungwan Je and Deokwoo Lee \\
 Electronic Imaging, Vol. 7, oral (19 Jan2023)\\
-[[paper]]()
+[[paper]](http://lilly9928.github.io/files/paper3.pdf)
 
-***Calibrating a Three-Viewpoints Thermal Camera with Few Correspondences** \\
+* **Calibrating a Three-Viewpoints Thermal Camera with Few Correspondences** \\
 Ju O Kim, **Jieun Kim** and Deokwoo Lee \\
 Journal of Signal Processing Systems, Vol. 7,(Jan2023)\\
-[[paper]]()
+[[paper]](http://lilly9928.github.io/files/paper4.pdf)
 
-**2022**\\
+**2022**
 
-*** Facial Expression Recognition using Visual Transformer with Histogram of Oriented Gradients** \\
+* **Facial Expression Recognition using Visual Transformer with Histogram of Oriented Gradients** \\
 **Jieun Kim**, Ju O Kim, Seungwan Je and Deokwoo Lee \\
 SPIE 12101, Pattern Recognition and Tracking XXXIII, 121010J,(27 May2022) \\
-[[paper]]()
+[[paper]](http://lilly9928.github.io/files/paper5.pdf)
 
 
-**Domestic**\\
+<!-- Domestic
+------------
 
 
-**2023** \\
-**2022** \\
-**2021** \\
+**2023** 
+**2022** 
+**2021**  -->
 
 
 Education
@@ -97,5 +105,5 @@ Honors & Awards
 * 2022년 Female Graduate Student Engineering Research (여대학원생 공학연구팀제 지원사업)
   * Korea Foundation for Women In Science, Engineering and Technology, Korea, May. 2022 [[Download]](http://lilly9928.github.io/files/honors2.pdf)
 * Grand Prize (Deputy Prime Minister and Minister of Education Award)
-  * Education Public Data Analysis and Utilization Contest, Korea, Dec. 2022 [[Download]](http://academicpages.github.io/files/honors3.pdf)
+  * Education Public Data Analysis and Utilization Contest, Korea, Dec. 2022 [[Download]](http://lilly9928.github.io/files/honors3.pdf)
 
