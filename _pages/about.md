@@ -41,7 +41,7 @@ Publications
 
 **2023**
 
-* **Estimation of a Relative Camera Orientation with Few Correspondences using Unsynchronized Viewpoints** \\
+* <span style="color:#58ACFA">Estimation of a Relative Camera Orientation with Few Correspondences using Unsynchronized Viewpoints</span> \\
 **Jieun Kim** and Deokwoo Lee\\
 MITA2023,(Jul2023)\\
 [[paper]](http://lilly9928.github.io/files/paper1.pdf)
