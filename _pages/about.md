@@ -11,7 +11,7 @@ redirect_from:
 
 News
 ====
- :pray: **CLFW: Contrastive Learning for Facial Expression Recognition in the Wild**, sumitted
+ 🙏 **CLFW: Contrastive Learning for Facial Expression Recognition in the Wild**, sumitted
 {: .notice}
 
 
