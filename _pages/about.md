@@ -11,7 +11,7 @@ redirect_from:
 
 News
 ====
-**Watch out!** You can also add notices by appending `{: .notice}` to a paragraph.
+CLFW: Contrastive Learning for Facial Expression Recognition in the Wild, sumitted
 {: .notice}
 
 
@@ -37,8 +37,7 @@ Research Interest
 
 Publications
 ======
-International
------
+**International**
 
 **2023**
 
