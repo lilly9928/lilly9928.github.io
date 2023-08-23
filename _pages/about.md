@@ -49,8 +49,16 @@ Education
 
 Honors & Awards
 ======
-* Best Paper Award, Korea Multimedia Society  Spring Conference, Korea (May. 2022)[Download](http://lilly9928.github.io/files/honors1.pdf)
-* 2022년 Female Graduate Student Engineering Research (여대학원생 공학연구팀제 지원사업),Korea Foundation for Women In Science, Engineering and Technology, Korea (May. 2022) [Download](http://lilly9928.github.io/files/honors2.pdf)
-* Grand Prize (Deputy Prime Minister and Minister of Education Award), Education Public Data Analysis and Utilization Contest, Korea (Dec. 2022)
-[Download](http://academicpages.github.io/files/honors3.pdf)
+* Best Paper Award
+  * Korea Multimedia Society Spring Conference, Korea 
+  * May. 2022
+  * [Download](http://lilly9928.github.io/files/honors1.pdf)
+* 2022년 Female Graduate Student Engineering Research (여대학원생 공학연구팀제 지원사업)
+  * Korea Foundation for Women In Science, Engineering and Technology, Korea 
+  * May. 2022
+  * [Download](http://lilly9928.github.io/files/honors2.pdf)
+* Grand Prize (Deputy Prime Minister and Minister of Education Award)
+  * Education Public Data Analysis and Utilization Contest, Korea 
+  * Dec. 2022
+  * [Download](http://academicpages.github.io/files/honors3.pdf)
 
