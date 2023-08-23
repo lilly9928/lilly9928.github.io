@@ -46,7 +46,7 @@ Publications
 MITA2023,(Jul2023)\\
 [[paper]](http://lilly9928.github.io/files/paper1.pdf)
 
-* * <span style="color:#0B0B61">**Facial Expression Recognition Robust to Occlusion and to Intra-Similarity Problem using Relevant Subsampling**</span> \\
+* <span style="color:#0B0B61">**Facial Expression Recognition Robust to Occlusion and to Intra-Similarity Problem using Relevant Subsampling**</span> \\
 **Jieun Kim** and Deokwoo Lee\\
 Sensors, 23(5), 2619, pp. 1-15,(2023)\\
 [[paper]](http://lilly9928.github.io/files/paper2.pdf)
