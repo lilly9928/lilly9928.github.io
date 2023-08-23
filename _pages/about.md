@@ -9,6 +9,12 @@ redirect_from:
 ---
 {% include base_path %}
 
+News
+====
+**Watch out!** You can also add notices by appending `{: .notice}` to a paragraph.
+{: .notice}
+
+
 Biography
 ======
 I am PH.D student at [Yonsei University](https://gsi.yonsei.ac.kr/). I received my M.S and B.S in Computer Engineering from [Keimyung University](https://kmu.ac.kr/uni/main/main.jsp), where I was advised by Prof. Deokwoo Lee. 
@@ -28,16 +34,11 @@ Research Interest
   {% endfor %}</ul> -->
 
 
-News
-====
-**Watch out!** You can also add notices by appending `{: .notice}` to a paragraph.
-{: .notice}
-
 
 Publications
 ======
 International
-------------
+-----
 
 **2023**
 
