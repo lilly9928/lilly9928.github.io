@@ -71,7 +71,7 @@ Journal of Signal Processing Systems, Vol. 7,Jan 2023\\
 
 **2022**
 
-* <span style="color:#0B0B61">**Facial Expression Recognition using Visual Transformer with Histogram of Oriented Gradients**</span> \\
+* <span style="color:#0B0B61">**Facial Expression Recognition Robust to Occlusion using Spatial Transformer Network with Triplet Loss Function**</span> \\
 **Jieun Kim**, Ju O Kim, Seungwan Je and Deokwoo Lee \\
 SPIE 12101, Pattern Recognition and Tracking XXXIII, 121010J,27 May 2022 \\
 [[paper]](http://lilly9928.github.io/files/paper5.pdf)
@@ -118,4 +118,6 @@ Korea Multimedia Society Spring Conference, Korea, May. 2022 [[Download]](http:/
 Korea Foundation for Women In Science, Engineering and Technology, Korea, May. 2022 [[Download]](http://lilly9928.github.io/files/honors2.pdf)
 * **Grand Prize (Deputy Prime Minister and Minister of Education Award)**\\
 Education Public Data Analysis and Utilization Contest, Korea, Dec. 2022 [[Download]](http://lilly9928.github.io/files/honors3.pdf)
+* **Yonsei Junior Convergence Research Group(연세 Junior 융합연구그룹 선정)**\\
+Yonsei Institute of Convergence Science(ICONS), Korea, May.2023 [[Download]]()
 
