@@ -9,14 +9,15 @@ main:
   # - title: "Teaching"
   #   url: /teaching/    
     
-  - title: "More"
-    url: /more/
         
   # - title: "Blog Posts"
   #   url: /year-archive/
     
   - title: "CV"
     url: http://lilly9928.github.io/files/CV_김지은.pdf
+
+  - title: "More"
+    url: /more/
     
   # - title: "Guide"
   #   url: /markdown/
