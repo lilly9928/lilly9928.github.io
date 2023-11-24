@@ -1,6 +1,6 @@
 ---
 title: "Front-end APP"
-excerpt: "2021.05.04 ~ 2021.05.24 front-end development using Flutter <br/><img src='/images/example.jpg'>"
+excerpt: "2021.05.04 ~ 2021.05.24 front-end development using Flutter <br/><img src='/images/pf3.jpeg'>"
 collection: portfolio
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: "Front-end Web"
-excerpt: "2021.05.10 front-end development using javascript, css, html, php, gnuboard <br/><img src='/images/example.jpg'>"
+excerpt: "2021.05.10 front-end development using javascript, css, html, php, gnuboard <br/>"
 collection: portfolio
 ---
 2021.05.10 front-end development using javascript, css, html, php, gnuboard
