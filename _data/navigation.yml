@@ -16,8 +16,8 @@ main:
     url: http://lilly9928.github.io/files/CV_김지은.pdf
     
       
-  - title: "Portfolio"
-    url: /portfolio/
+  # - title: "Portfolio"
+  #   url: /portfolio/
 
     
   # - title: "Guide"
