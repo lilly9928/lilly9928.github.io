@@ -19,8 +19,10 @@ redirect_from:
 
 Biography
 ======
+I'm a second-year Ph.D. student at Vision and Learning Lab. at Yonsei University advised by Prof. Jonghyun Choi. My research focus is on multi-modal (specifically, vision-language) understanding and generation.
 
-I am PH.D student at [Yonsei University](https://gsi.yonsei.ac.kr/). I received my M.S and B.S in Computer Engineering from [Keimyung University](https://kmu.ac.kr/uni/main/main.jsp), where I was advised by [Prof. Deokwoo Lee](https://sites.google.com/view/dwoolee/deokwoo-lee). 
+
+I am first-year PH.D student at [Soft Computing Lab](https://sites.google.com/view/yssclab/home) at [Yonsei University](https://graduate.yonsei.ac.kr/) advised by [Prof. Sungbae Cho](https://sites.google.com/view/yssclab/people). I received my M.S and B.S in Computer Engineering from [Keimyung University](https://kmu.ac.kr/uni/main/main.jsp), where I was advised by [Prof. Deokwoo Lee](https://sites.google.com/view/dwoolee/deokwoo-lee). 
 
 <!-- My research interest lies in applied machine learning, which aims to develop practical ML solutions for real-world applications. I have covered a wide range of data types (e.g., matrix/tensor, text, graph, time series), tasks (e.g., classification, outcome prediction, anomaly detection, retrieval, data generation), and domains (e.g., healthcare, manufacturing, recommender systems). -->
 
@@ -48,6 +50,11 @@ Publications
 [[paper]]()
 
 **2023**
+
+* <span style="color:#0B0B61">**FTT: Fourier Transform based Transformer for Brain CT Report Generation**</span> \\
+**Jieun Kim**, Byeong Su Kim, Insung Choi, Zepa Yang and Beakcheol Jang\\
+ICAIIC2024,Feb 2024\\
+[[paper]]()
 
 * <span style="color:#0B0B61">**Estimation of a Relative Camera Orientation with Few Correspondences using Unsynchronized Viewpoints**</span> \\
 **Jieun Kim** and Deokwoo Lee\\
@@ -92,7 +99,8 @@ Education
 
 * B.S. in Computer Engineering, Keimyung University,Deagu 2017 - 2021
 * M.S. in Computer Engineering, Keimyung University,Deagu 2021 - 2023
-* **Ph.D in  Information Systems, Yonsei University, 2023 - current**
+* Ph.D in  Information Systems, Yonsei University,Seoul 2023 - 2024
+* **Ph.D in AI graduate school, Yonsei University,Seoul 2024 - current**
 
 <!-- Projects
 ======
