@@ -19,8 +19,6 @@ redirect_from:
 
 Biography
 ======
-I'm a second-year Ph.D. student at Vision and Learning Lab. at Yonsei University advised by Prof. Jonghyun Choi. My research focus is on multi-modal (specifically, vision-language) understanding and generation.
-
 
 I am first-year PH.D student at [Soft Computing Lab](https://sites.google.com/view/yssclab/home) at [Yonsei University](https://graduate.yonsei.ac.kr/) advised by [Prof. Sungbae Cho](https://sites.google.com/view/yssclab/people). I received my M.S and B.S in Computer Engineering from [Keimyung University](https://kmu.ac.kr/uni/main/main.jsp), where I was advised by [Prof. Deokwoo Lee](https://sites.google.com/view/dwoolee/deokwoo-lee). 
 
