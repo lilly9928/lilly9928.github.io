@@ -20,7 +20,7 @@ redirect_from:
 Biography
 ======
 
-I am first-year PH.D student at [Soft Computing Lab](https://sites.google.com/view/yssclab/home) at [Yonsei University](https://graduate.yonsei.ac.kr/) advised by [Prof. Sungbae Cho](https://sites.google.com/view/yssclab/people). I received my M.S and B.S in Computer Engineering from [Keimyung University](https://kmu.ac.kr/uni/main/main.jsp), where I was advised by [Prof. Deokwoo Lee](https://sites.google.com/view/dwoolee/deokwoo-lee). 
+I am first-year PH.D student at [Soft Computing Lab](https://sites.google.com/view/yssclab/home) at [Yonsei University](https://graduate.yonsei.ac.kr/) advised by [Prof. Sungbae Cho](https://sclab.yonsei.ac.kr/people). I received my M.S and B.S in Computer Engineering from [Keimyung University](https://kmu.ac.kr/uni/main/main.jsp), where I was advised by [Prof. Deokwoo Lee](https://sites.google.com/view/dwoolee/deokwoo-lee). 
 
 <!-- My research interest lies in applied machine learning, which aims to develop practical ML solutions for real-world applications. I have covered a wide range of data types (e.g., matrix/tensor, text, graph, time series), tasks (e.g., classification, outcome prediction, anomaly detection, retrieval, data generation), and domains (e.g., healthcare, manufacturing, recommender systems). -->
 
@@ -28,7 +28,7 @@ Research Interest
 ======
 * Computer Vision 
 * Multi Modal 
-* Deep learning approaches to real-world applications
+* Nuero-Symbolic
 
 <!-- Publications
 ======
@@ -47,12 +47,13 @@ Publications
 **Jieun Kim** and Deokwoo Lee\\
 [[paper]]()
 
-**2023**
-
+**2024**
 * <span style="color:#0B0B61">**FTT: Fourier Transform based Transformer for Brain CT Report Generation**</span> \\
 **Jieun Kim**, Byeong Su Kim, Insung Choi, Zepa Yang and Beakcheol Jang\\
 ICAIIC2024,Feb 2024\\
 [[paper]]()
+
+**2023**
 
 * <span style="color:#0B0B61">**Estimation of a Relative Camera Orientation with Few Correspondences using Unsynchronized Viewpoints**</span> \\
 **Jieun Kim** and Deokwoo Lee\\
