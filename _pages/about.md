@@ -47,6 +47,26 @@ Publications
 **Jieun Kim** and Deokwoo Lee\\
 [[paper]]()
 
+* <span style="color:#0B0B61">**LoCoT: Logical Chain-of-Thought Prompting for Knowledge-Based Visual Reasoning**</span> \\
+**Jieun Kim**, Gatum Erlangga, Yoon Choi and Sung-Bae Cho\\
+[[paper]]()
+
+* <span style="color:#0B0B61">**Fuzzy Contrastive Decoding to Alleviate Object Hallucination in Large Vision-Language Models**</span> \\
+**Jieun Kim**, Jinmyeong Kim, Yoonji Kim and Sung-Bae Cho\\
+[[paper]]()
+
+* <span style="color:#0B0B61">**ThinkAgent: Context-aware Logical Reasoning with Situation Schema in Large Language Models**</span> \\
+**Jieun Kim**, YoungHae Choi, Seoha Lim and Sung-Bae Cho\\
+[[paper]]()
+
+
+
+**2025**
+* <span style="color:#F7819F">**Visual Question Answering: A Survey of Methods, Datasets, Evaluation, and Challenges**</span> \\
+Byeong Su Kim, **Jieun Kim**, Deokwoo Lee, Beakcheol Jang\\
+ACM Computing Surveys(IF 23.8)\\
+[[paper]]()
+
 **2024**
 * <span style="color:#0B0B61">**FTT: Fourier Transform based Transformer for Brain CT Report Generation**</span> \\
 **Jieun Kim**, Byeong Su Kim, Insung Choi, Zepa Yang and Beakcheol Jang\\
