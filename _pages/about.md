@@ -64,7 +64,7 @@ Publications
 **2025**
 * <span style="color:#F7819F">**Visual Question Answering: A Survey of Methods, Datasets, Evaluation, and Challenges**</span> \\
 Byeong Su Kim, **Jieun Kim**, Deokwoo Lee, Beakcheol Jang\\
-ACM Computing Surveys(IF 23.8)\\
+ACM Computing Surveys **(IF 23.8)**\\
 [[paper]]()
 
 **2024**
