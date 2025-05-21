@@ -76,7 +76,7 @@ ACM Computing Surveys **(IF 23.8)**\\
 * <span style="color:#0B0B61">**FTT: Fourier Transform based Transformer for Brain CT Report Generation**</span> \\
 **Jieun Kim**, Byeong Su Kim, Insung Choi, Zepa Yang and Beakcheol Jang\\
 ICAIIC2024,Feb 2024\\
-[[paper]]((http://lilly9928.github.io/files/paper_FTT.pdf)
+[[paper]](http://lilly9928.github.io/files/paper_FTT.pdf)
 
 **2023**
 
