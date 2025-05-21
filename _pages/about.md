@@ -20,7 +20,7 @@ redirect_from:
 Biography
 ======
 
-I am first-year PH.D student at [Soft Computing Lab](https://sites.google.com/view/yssclab/home) at [Yonsei University](https://graduate.yonsei.ac.kr/) advised by [Prof. Sungbae Cho](https://sclab.yonsei.ac.kr/people). My research interests lie in computer vision, multimodal learning, and neuro-symbolic approaches.. 
+I'm PH.D student at [Soft Computing Lab](https://sites.google.com/view/yssclab/home) at [Yonsei University](https://graduate.yonsei.ac.kr/) advised by [Prof. Sungbae Cho](https://sclab.yonsei.ac.kr/people). My research focus is on computer vision, multimodal learning, and neuro-symbolic AI.
 
 <!-- I received my M.S and B.S in Computer Engineering from [Keimyung University](https://kmu.ac.kr/uni/main/main.jsp), where I was advised by [Prof. Deokwoo Lee](https://sites.google.com/view/dwoolee/deokwoo-lee).  -->
 
@@ -45,21 +45,24 @@ Publications
 <hr/>
 
 **Under Review**
-* <span style="color:#0B0B61">**CLFW: Contrastive Learning for Facial Expression Recognition in the Wild**</span> \\
-**Jieun Kim** and Deokwoo Lee\\
-[[paper]]()
 
-* <span style="color:#0B0B61">**LoCoT: Logical Chain-of-Thought Prompting for Knowledge-Based Visual Reasoning**</span> \\
-**Jieun Kim**, Gatum Erlangga, Yoon Choi and Sung-Bae Cho\\
+* <span style="color:#0B0B61">**Context-aware Logical Reasoning in Language Model via Situation Working Memory**</span> \\
+**Jieun Kim**, YoungHae Choi, Seoha Lim and Sung-Bae Cho\\
 [[paper]]()
 
 * <span style="color:#0B0B61">**Fuzzy Contrastive Decoding to Alleviate Object Hallucination in Large Vision-Language Models**</span> \\
 **Jieun Kim**, Jinmyeong Kim, Yoonji Kim and Sung-Bae Cho\\
 [[paper]]()
 
-* <span style="color:#0B0B61">**Context-aware Logical Reasoning in Language Model via Situation Working Memory**</span> \\
-**Jieun Kim**, YoungHae Choi, Seoha Lim and Sung-Bae Cho\\
+* <span style="color:#0B0B61">**LoCoT: Logical Chain-of-Thought Prompting for Knowledge-Based Visual Reasoning**</span> \\
+**Jieun Kim**, Gatum Erlangga, Yoon Choi and Sung-Bae Cho\\
 [[paper]]()
+
+* <span style="color:#0B0B61">**CLFW: Contrastive Learning for Facial Expression Recognition in the Wild**</span> \\
+**Jieun Kim** and Deokwoo Lee\\
+[[paper]]()
+
+
 
 
 
@@ -67,13 +70,13 @@ Publications
 * <span style="color:#F7819F">**Visual Question Answering: A Survey of Methods, Datasets, Evaluation, and Challenges**</span> \\
 Byeong Su Kim, **Jieun Kim**, Deokwoo Lee, Beakcheol Jang\\
 ACM Computing Surveys **(IF 23.8)**\\
-[[paper]]()
+[[paper]](http://lilly9928.github.io/files/paper_vqasurvey.pdf)
 
 **2024**
 * <span style="color:#0B0B61">**FTT: Fourier Transform based Transformer for Brain CT Report Generation**</span> \\
 **Jieun Kim**, Byeong Su Kim, Insung Choi, Zepa Yang and Beakcheol Jang\\
 ICAIIC2024,Feb 2024\\
-[[paper]]()
+[[paper]]((http://lilly9928.github.io/files/paper_FTT.pdf)
 
 **2023**
 
@@ -147,6 +150,6 @@ Korea Multimedia Society Spring Conference, Korea, May. 2022 [[Download]](http:/
 Korea Foundation for Women In Science, Engineering and Technology, Korea, May. 2022 [[Download]](http://lilly9928.github.io/files/honors2.pdf)
 * **Grand Prize (Deputy Prime Minister and Minister of Education Award)**\\
 Education Public Data Analysis and Utilization Contest, Korea, Dec. 2022 [[Download]](http://lilly9928.github.io/files/honors3.pdf)
-* **Yonsei Junior Convergence Research Group(연세 Junior 융합연구그룹 선정)**\\
+* **Yonsei Junior Convergence Research Group(연세 Junior 융합연구그룹)**\\
 Yonsei Institute of Convergence Science(ICONS), Korea, May.2023 [[Download]]()
 
