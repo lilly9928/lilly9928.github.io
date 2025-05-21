@@ -20,7 +20,9 @@ redirect_from:
 Biography
 ======
 
-I am first-year PH.D student at [Soft Computing Lab](https://sites.google.com/view/yssclab/home) at [Yonsei University](https://graduate.yonsei.ac.kr/) advised by [Prof. Sungbae Cho](https://sclab.yonsei.ac.kr/people). I received my M.S and B.S in Computer Engineering from [Keimyung University](https://kmu.ac.kr/uni/main/main.jsp), where I was advised by [Prof. Deokwoo Lee](https://sites.google.com/view/dwoolee/deokwoo-lee). 
+I am first-year PH.D student at [Soft Computing Lab](https://sites.google.com/view/yssclab/home) at [Yonsei University](https://graduate.yonsei.ac.kr/) advised by [Prof. Sungbae Cho](https://sclab.yonsei.ac.kr/people). My research interests lie in computer vision, multimodal learning, and neuro-symbolic approaches.. 
+
+<!-- I received my M.S and B.S in Computer Engineering from [Keimyung University](https://kmu.ac.kr/uni/main/main.jsp), where I was advised by [Prof. Deokwoo Lee](https://sites.google.com/view/dwoolee/deokwoo-lee).  -->
 
 <!-- My research interest lies in applied machine learning, which aims to develop practical ML solutions for real-world applications. I have covered a wide range of data types (e.g., matrix/tensor, text, graph, time series), tasks (e.g., classification, outcome prediction, anomaly detection, retrieval, data generation), and domains (e.g., healthcare, manufacturing, recommender systems). -->
 
@@ -55,7 +57,7 @@ Publications
 **Jieun Kim**, Jinmyeong Kim, Yoonji Kim and Sung-Bae Cho\\
 [[paper]]()
 
-* <span style="color:#0B0B61">**ThinkAgent: Context-aware Logical Reasoning with Situation Schema in Large Language Models**</span> \\
+* <span style="color:#0B0B61">**Context-aware Logical Reasoning in Language Model via Situation Working Memory**</span> \\
 **Jieun Kim**, YoungHae Choi, Seoha Lim and Sung-Bae Cho\\
 [[paper]]()
 
@@ -111,7 +113,7 @@ SPIE 12101, Pattern Recognition and Tracking XXXIII, 121010J,27 May 2022 \\
 **2022** 
 **2021**  -->
 
-
+<!-- 
 Education
 ======
 <hr/>
@@ -119,7 +121,7 @@ Education
 * B.S. in Computer Engineering, Keimyung University,Deagu 2017 - 2021
 * M.S. in Computer Engineering, Keimyung University,Deagu 2021 - 2023
 * Ph.D in  Information Systems, Yonsei University,Seoul 2023 - 2024
-* **Ph.D in AI graduate school, Yonsei University,Seoul 2024 - current**
+* **Ph.D in AI graduate school, Yonsei University,Seoul 2024 - current** -->
 
 <!-- Projects
 ======
