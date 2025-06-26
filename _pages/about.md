@@ -50,10 +50,6 @@ Publications
 **Jieun Kim**, YoungHae Choi, Seoha Lim and Sung-Bae Cho\\
 [[paper]]()
 
-* <span style="color:#0B0B61">**Fuzzy Contrastive Decoding to Alleviate Object Hallucination in Large Vision-Language Models**</span> \\
-**Jieun Kim**, Jinmyeong Kim, Yoonji Kim and Sung-Bae Cho\\
-[[paper]]()
-
 * <span style="color:#0B0B61">**LoCoT: Logical Chain-of-Thought Prompting for Knowledge-Based Visual Reasoning**</span> \\
 **Jieun Kim**, Gatum Erlangga, Yoon Choi and Sung-Bae Cho\\
 [[paper]]()
@@ -67,6 +63,11 @@ Publications
 
 
 **2025**
+* <span style="color:#0B0B61">**Fuzzy Contrastive Decoding to Alleviate Object Hallucination in Large Vision-Language Models**</span> \\
+**Jieun Kim**, Jinmyeong Kim, Yoonji Kim and Sung-Bae Cho\\
+ICCV 2025 \\
+[[paper]]()
+
 * <span style="color:#F7819F">**Visual Question Answering: A Survey of Methods, Datasets, Evaluation, and Challenges**</span> \\
 Byeong Su Kim, **Jieun Kim**, Deokwoo Lee, Beakcheol Jang\\
 ACM Computing Surveys **(IF 23.8)**\\
