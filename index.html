@@ -14,17 +14,15 @@
 </head>
 
 <body>
-  <table
-    style="width:100%;max-width:800px;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
+  <table class="content-table content-table--main">
     <tbody>
-      <tr style="padding:0px">
-        <td style="padding:0px">
-          <table
-            style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
+      <tr class="row-tight">
+        <td class="td-zero">
+          <table class="content-table">
             <tbody>
-              <tr style="padding:0px">
-                <td style="padding:2.5%;width:63%;vertical-align:middle">
-                  <p class="name" style="text-align: center;">
+              <tr class="row-tight">
+                <td class="td-intro">
+                  <p class="name">
                     Jieun Kim
                   </p>
                   <p>
@@ -43,26 +41,26 @@
                   </p>
 
 
-                  <p style="text-align:center">
+                  <p class="text-center">
                     <a href="mailto:lilly9928@yonsei.ac.kr">Email</a> &nbsp;/&nbsp;
                     <a href="data\My_CV.pdf">CV</a> &nbsp;/&nbsp;
                     <a href="https://www.linkedin.com/in/jieunnn/">LinkedIn</a> &nbsp;/&nbsp;
                     <a href="https://github.com/lilly9928">Github</a>
                   </p>
                 </td>
-                <td style="padding:2.5%;width:37%;max-width:37%">
-                  <a><img style="width:100%;max-width:100%;object-fit: cover; border-radius: 50%;" alt="profile photo"
-                      src="images/profile2.png" class="hoverZoomLink"></a>
+                <td class="td-intro-photo">
+                  <a><img class="profile-photo hoverZoomLink" alt="profile photo"
+                      src="images/profile2.png"></a>
                 </td>
               </tr>
             </tbody>
           </table>
 
           <!-- News Title -->
-          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin:auto;">
+          <table class="content-table">
             <tbody>
               <tr>
-                <td style="padding:16px;width:100%;vertical-align:middle">
+                <td class="td-section-title">
                   <h2>News</h2> <!-- 여기에 아래쪽 마진 추가 -->
                 </td>
               </tr>
@@ -70,68 +68,64 @@
           </table>
 
           <!-- News Content -->
-          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin:auto;">
-            <tbody>
+          <div class="news-scroll">
+            <table class="content-table">
+              <tbody>
+                <tr>
+                  <td class="td-news-row">
+                    <span class="congrats-badge">🎉</span>
+                    2026.01 : One paper on Adaptive Beam Search is accepted at <strong>PAKDD 2026</strong>!
+                  </td>
+                </tr>
+
+
                  <tr>
-                <td style="padding:12px;width:100%;vertical-align:middle">
-                  <span class="congrats-badge"
-                    style=" padding:2px 6px; border-radius:4px; font-weight:bold; margin-right:8px;">🎉</span>
-                  2026.01 : One paper on Adaptive Beam Search is accepted at <strong>PAKDD 2026</strong>!
-                </td>
-              </tr>
+                  <td class="td-news-row">
+                    <span class="congrats-badge">🎉</span>
+                    2026.01 : One paper on Hierarchical Semantic Segmentation is accepted at <strong>ICLR
+                      2026</strong>!
+                  </td>
+                </tr>
 
+                <tr>
+                  <td class="td-news-row">
+                    <span class="congrats-badge">🎉</span>
+                    2026.01 : One paper on Visual–Linguistic Abductive Reasoning is accepted at <strong>EACL
+                      2026</strong>!
+                  </td>
+                </tr>
 
-               <tr>
-                <td style="padding:12px;width:100%;vertical-align:middle">
-                  <span class="congrats-badge"
-                    style=" padding:2px 6px; border-radius:4px; font-weight:bold; margin-right:8px;">🎉</span>
-                  2026.01 : One paper on Hierarchical Semantic Segmentation is accepted at <strong>ICLR
-                    2026</strong>!
-                </td>
-              </tr>
-
-              <tr>
-                <td style="padding:12px;width:100%;vertical-align:middle">
-                  <span class="congrats-badge"
-                    style=" padding:2px 6px; border-radius:4px; font-weight:bold; margin-right:8px;">🎉</span>
-                  2026.01 : One paper on Visual–Linguistic Abductive Reasoning is accepted at <strong>EACL
-                    2026</strong>!
-                </td>
-              </tr>
-
-              <tr>
-                <td style="padding:12px;width:100%;vertical-align:middle">
-                  <span class="congrats-badge"
-                    style=" padding:2px 6px; border-radius:4px; font-weight:bold; margin-right:8px;">🎉</span>
-                  2025.06 : One paper on Mitigating Hallucination of Visual Language Model is accepted at <strong>ICCV
-                    2025</strong>!
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                <tr>
+                  <td class="td-news-row">
+                    <span class="congrats-badge">🎉</span>
+                    2025.06 : One paper on Mitigating Hallucination of Visual Language Model is accepted at <strong>ICCV
+                      2025</strong>!
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
 
         
-          <table
-            style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
+          <table class="content-table">
             <tbody>
               <tr>
-                <td style="padding:16px;width:100%;vertical-align:middle">
+                <td class="td-section-title">
                   <h2>UnderReview</h2>
                 </td>
               </tr>
             </tbody>
           </table>
-          <table
-            style="width: 100%; border: 0px;border-spacing: 0px;border-collapse: separate;margin-right: auto;margin-left: auto;">
+          <table class="content-table">
             <tbody>
 
               <!--PAPER START-->
               <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td style="padding:20px;width:30%;">
-                  <img src="images/situW.png" style="width:180px; height:100px;display:block;">
+                <td class="td-paper-thumb">
+                  <img src="images/situW.png" class="paper-thumb-img" alt="">
                 </td>
-                <td style="padding:0px;width:70%;vertical-align:middle">
+                <td class="td-paper-body">
                   <span class="papertitle">Injecting Context via Situation Working Memory for Logical Reasoning with LLMs</span>
                   </a>
                   <br>
@@ -148,10 +142,10 @@
 
                 <!--PAPER START-->
               <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td style="padding:20px;width:30%;">
-                  <img src="images/fuzzysteering.png" style="width:180px; height:100px;display:block;">
+                <td class="td-paper-thumb">
+                  <img src="images/fuzzysteering.png" class="paper-thumb-img" alt="">
                 </td>
-                <td style="padding:0px;width:70%;vertical-align:middle">
+                <td class="td-paper-body">
                   <span class="papertitle">Fuzzy Steering of Latent Space for Mitigating Hallucinations in Large Vision-Language Models</span>
                   </a>
                   <br>
@@ -169,10 +163,10 @@
 
                <!--PAPER START-->
               <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td style="padding:20px;width:30%;">
-                  <img src="images/scope.png" style="width:180px; height:100px;display:block;">
+                <td class="td-paper-thumb">
+                  <img src="images/scope.png" class="paper-thumb-img" alt="">
                 </td>
-                <td style="padding:0px;width:70%;vertical-align:middle">
+                <td class="td-paper-body">
                   <span class="papertitle">Diagnosing Spatial Consistency across Perspectives and Viewpoints in Large Vision-Language Models</span>
                   </a>
                   <br>
@@ -190,10 +184,10 @@
               
               <!--PAPER START-->
               <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td style="padding:20px;width:30%;">
-                  <img src="images/vad.png" style="width:180px; height:100px;display:block;">
+                <td class="td-paper-thumb">
+                  <img src="images/vad.png" class="paper-thumb-img" alt="">
                 </td>
-                <td style="padding:0px;width:70%;vertical-align:middle">
+                <td class="td-paper-body">
                   <span class="papertitle">Perceptual Inference Theory for Unsupervised Video Anomaly Detection</span>
                   </a>
                   <br>
@@ -208,27 +202,27 @@
               </tr>
               <!--PAPER END-->
 
+            </tbody>
+          </table>
 
-          <table
-            style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
+          <table class="content-table">
             <tbody>
               <tr>
-                <td style="padding:16px;width:100%;vertical-align:middle">
+                <td class="td-section-title">
                   <h2>Research</h2>
                 </td>
               </tr>
             </tbody>
           </table>
-          <table
-            style="width: 100%; border: 0px;border-spacing: 0px;border-collapse: separate;margin-right: auto;margin-left: auto;">
+          <table class="content-table">
             <tbody>
 
               <!--PAPER START-->
               <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td style="padding:20px;width:30%;">
-                  <img src="images/adaptive_beam.png" style="width:180px; height:100px;display:block;">
+                <td class="td-paper-thumb">
+                  <img src="images/adaptive_beam.png" class="paper-thumb-img" alt="">
                 </td>
-                <td style="padding:0px;width:70%;vertical-align:middle">
+                <td class="td-paper-body">
                   <span class="papertitle">Adaptive Beam Search with Shannon Entropy for Data-centric Reasoning in LLMs,</span>
                   </a>
                   <br>
@@ -245,10 +239,10 @@
               
                   <!--PAPER START-->
               <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td style="padding:20px;width:30%;">
-                  <img src="images/segmentation.png" style="width:180px; height:100px;display:block;">
+                <td class="td-paper-thumb">
+                  <img src="images/segmentation.png" class="paper-thumb-img" alt="">
                 </td>
-                <td style="padding:0px;width:70%;vertical-align:middle">
+                <td class="td-paper-body">
                   <span class="papertitle">Hierarchical Prototype Learning for Semantic Segmentation</span>
                   </a>
                   <br>
@@ -266,10 +260,10 @@
 
               <!--PAPER START-->
               <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td style="padding:20px;width:30%;">
-                  <img src="images/locott.png" style="width:180px; height:100px;  display:block;">
+                <td class="td-paper-thumb">
+                  <img src="images/locott.png" class="paper-thumb-img" alt="">
                 </td>
-                <td style="padding:0px;width:70%;vertical-align:middle">
+                <td class="td-paper-body">
                   <span class="papertitle">Visual–Linguistic Abductive Reasoning with LLMs for Knowledge-based Visual Question Answering</span>
                   </a>
                   <br>
@@ -286,10 +280,10 @@
 
               <!--PAPER START-->
               <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td style="padding:20px;width:30%;">
-                  <img src="images/fuzzycd_img.png" style="width:180px; height:100px;display:block;">
+                <td class="td-paper-thumb">
+                  <img src="images/fuzzycd_img.png" class="paper-thumb-img" alt="">
                 </td>
-                <td style="padding:0px;width:70%;vertical-align:middle">
+                <td class="td-paper-body">
                   <span class="papertitle">Fuzzy Contrastive Decoding to Alleviate Object Hallucination in Large
                     Vision-Language Models</span>
                   </a>
@@ -307,11 +301,11 @@
               <!--PAPER END-->
               <!--PAPER START-->
               <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td style="padding:20px;width:30%;">
-                  <img src="images/survey.png" style="width:180px; height:100px;display:block;">
+                <td class="td-paper-thumb">
+                  <img src="images/survey.png" class="paper-thumb-img" alt="">
 
                 </td>
-                <td style="padding:0px;width:70%;vertical-align:middle">
+                <td class="td-paper-body">
                   <span class="papertitle">Visual Question Answering: A Survey of Methods, Datasets, Evaluation, and
                     Challenges</span>
                   </a>
@@ -328,11 +322,11 @@
 
               <!--PAPER START-->
               <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td style="padding:20px;width:30%;">
-                  <img src="images/noImage.jpg" style="width:180px; height:100px;display:block;">
+                <td class="td-paper-thumb">
+                  <img src="images/noImage.jpg" class="paper-thumb-img" alt="">
 
                 </td>
-                <td style="padding:0px;width:70%;vertical-align:middle">
+                <td class="td-paper-body">
                   <span class="papertitle">FTT: Fourier Transform based Transformer for Brain CT Report
                     Generation</span>
                   </a>
@@ -346,11 +340,11 @@
               <!--PAPER END-->
               <!--PAPER START-->
               <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td style="padding:20px;width:30%;">
-                  <img src="images/noImage.jpg" style="width:180px; height:100px;display:block;">
+                <td class="td-paper-thumb">
+                  <img src="images/noImage.jpg" class="paper-thumb-img" alt="">
 
                 </td>
-                <td style="padding:0px;width:70%;vertical-align:middle">
+                <td class="td-paper-body">
                   <span class="papertitle">Facial Expression Recognition using Visual Transformer with Histogram of
                     Oriented Gradients</span>
                   </a>
@@ -364,11 +358,11 @@
               <!--PAPER END-->
               <!--PAPER START-->
               <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td style="padding:20px;width:30%;">
-                  <img src="images/noImage.jpg" style="width:180px; height:100px;display:block;">
+                <td class="td-paper-thumb">
+                  <img src="images/noImage.jpg" class="paper-thumb-img" alt="">
 
                 </td>
-                <td style="padding:0px;width:70%;vertical-align:middle">
+                <td class="td-paper-body">
                   <span class="papertitle">Facial Expression Recognition Robust to Occlusion using Spatial Transformer
                     Network with Triplet Loss Function</span>
                   </a>
@@ -386,13 +380,12 @@
           </table>
 
 
-          <table
-            style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;">
+          <table class="content-table">
             <tbody>
               <tr>
-                <td style="padding:0px">
-                  <p style="text-align:center;font-size:small;">
-                    Design and source code from <a style="font-size:small;" href="https://jonbarron.info">Jon Barron</a>
+                <td class="td-zero">
+                  <p class="footer-note">
+                    Design and source code from <a href="https://jonbarron.info">Jon Barron</a>
                   </p>
                 </td>
               </tr>
