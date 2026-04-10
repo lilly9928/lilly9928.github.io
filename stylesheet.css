@@ -177,6 +177,13 @@ span.highlight {
   font-size: 12px;
 }
 
+
+  .highlight-text {
+    color: #FFDE42;
+    font-weight: 700;
+  }
+
+
 .tooltip:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
