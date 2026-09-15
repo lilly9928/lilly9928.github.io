@@ -323,6 +323,7 @@
     <div class="gsetup no-print">
       <label>단위
         <select id="unit">
+          <option value="day">일</option>
           <option value="week">주</option>
           <option value="month" selected>월</option>
           <option value="quarter">분기</option>
@@ -330,7 +331,7 @@
         </select>
       </label>
       <label>시작 <input id="startNo" type="number" min="1" max="12" value="1" style="width:46px"></label>
-      <label>칸 수 <input id="spanNo" type="number" min="3" max="24" value="12" style="width:46px"></label>
+      <label>칸 수 <input id="spanNo" type="number" min="3" max="31" value="12" style="width:46px"></label>
       <label>기간 표기 <input id="periodTxt" type="text" placeholder="예: 2026.03 ~ 2027.02" style="width:150px"></label>
       <button id="addResearch" type="button">연구 트랙 줄 추가</button>
       <button id="addPaper" type="button">논문 트랙 줄 추가</button>
@@ -380,7 +381,8 @@
   };
 
   var UNIT = {
-    week:    { max: 52, label: function (s, i) { return (s + i) + '주'; }, head: '주' },
+    day:     { max: 366, label: function (s, i) { return (s + i) + '일'; }, head: '일' },
+    week:    { max: 53, label: function (s, i) { return (s + i) + '주'; }, head: '주' },
     month:   { max: 12, label: function (s, i) { return ((s - 1 + i) % 12) + 1 + '월'; }, head: '월' },
     quarter: { max: 4,  label: function (s, i) { return 'Q' + (((s - 1 + i) % 4) + 1); }, head: '분기' },
     half:    { max: 2,  label: function (s, i) { return ((s - 1 + i) % 2 === 0) ? '상반기' : '하반기'; }, head: '반기' }
@@ -391,7 +393,7 @@
     startEl.max = u.max;
     if (+startEl.value > u.max) startEl.value = 1;
     var start = Math.max(1, +startEl.value || 1);
-    var n = Math.min(24, Math.max(3, +spanEl.value || 12));
+    var n = Math.min(31, Math.max(3, +spanEl.value || 12));
     spanEl.value = n;
 
     var cols = '104px repeat(' + n + ', 1fr) 128px';
