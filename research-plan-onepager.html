@@ -83,6 +83,17 @@
   .sub{font-size:9.5px;color:var(--hint);margin:6px 0 2px;}
   .sub:first-child{margin-top:0;}
 
+  .blk{position:relative;padding-right:12px;}
+  .blk .rm{position:absolute;right:-2px;top:4px;border:0;background:transparent;color:#c3bdb4;
+    font-size:12px;line-height:1;cursor:pointer;padding:0 2px;}
+  .blk .rm:hover{color:var(--red);}
+  .more{font-family:inherit;font-size:9px;color:var(--blue);background:transparent;
+    border:0;padding:1px 0 0;cursor:pointer;}
+  .more:hover{text-decoration:underline;}
+  .addrow{display:flex;gap:8px;margin-top:8px;border-top:1px dashed var(--rule);padding-top:5px;}
+  .addrow button{font-family:inherit;font-size:9.5px;padding:2px 7px;cursor:pointer;
+    border:1px solid var(--rule-strong);background:#f6f4f0;color:var(--ink);}
+  .addrow button:hover{background:#e8e5df;}
   table.rows{width:100%;border-collapse:collapse;}
   table.rows th,table.rows td{border:1px solid var(--rule);padding:3px 4px;vertical-align:top;}
   table.rows th{font-size:9px;color:var(--hint);font-weight:500;background:#faf9f7;}
@@ -127,7 +138,7 @@
   [contenteditable]:focus{background:#eef3fb;}
   [data-ph]:empty::before{content:attr(data-ph);color:#b6b0a7;}
   .hide-hint [data-ph]:empty::before{content:"";}
-  .hide-hint .bar em,.hide-hint .colhead em,.hide-hint .bar .q,.hide-hint .sub,.hide-hint .cap{color:transparent;}
+  .hide-hint .bar em,.hide-hint .colhead em,.hide-hint .bar .q,.hide-hint .cap{color:transparent;}
 
   @media print{
     body{background:#fff;}
@@ -184,7 +195,7 @@
   <div class="gist">
     <div><span class="gn">근거 1 · 차별성</span><div contenteditable data-ph="기존 연구가 멈춘 지점을 한 줄로"></div></div>
     <div><span class="gn">근거 2 · 타당성</span><div contenteditable data-ph="답이 나온다고 보는 이유를 한 줄로"></div></div>
-    <div><span class="gn">근거 3 · 이해의 진전</span><div contenteditable data-ph="끝나면 새로 알게 되는 것을 한 줄로"></div></div>
+    <div><span class="gn">근거 3 · 우수성</span><div contenteditable data-ph="끝나면 새로 알게 되는 것을 한 줄로"></div></div>
   </div>
 
   <!-- 심화 단계 -->
@@ -252,11 +263,11 @@
     </div>
   </div>
 
-  <!-- 차별성 / 타당성 / 이해의 진전 -->
+  <!-- 차별성 / 타당성 / 우수성 -->
   <div class="band">
     <div class="bar">
       <h2>3. 근거 상세</h2>
-      <em>위 요지 세 줄을 각각 풀어 쓰는 칸</em>
+      <em>위 요지 세 줄을 각각 풀어 쓰는 칸 · 항목은 추가·삭제 가능</em>
     </div>
     <div class="tri">
 
@@ -264,18 +275,10 @@
         <div class="colhead"><h3>3.1 차별성</h3><em>기존 연구가 멈춘 지점</em></div>
         <div class="colbody">
           <div class="lead" contenteditable data-ph="요지 한 줄"></div>
-          <div class="sub">선행 연구와 그들이 답하지 못한 것</div>
-          <table class="rows">
-            <tr><th style="width:38%">연구 (연도)</th><th>어디까지 답했나</th><th style="width:30%">멈춘 지점</th></tr>
-            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-          </table>
-          <div class="sub">모두가 공통으로 비켜간 문제</div>
-          <ul class="slots"><li contenteditable></li></ul>
-          <div class="sub">본 연구가 한 단계 더 들어가는 지점</div>
-          <ul class="slots"><li contenteditable></li><li contenteditable></li></ul>
+        <div class="blk"><button class="rm no-print" type="button" title="항목 삭제">×</button><div class="sub" contenteditable>선행 연구와 그들이 답하지 못한 것</div><table class="rows"><thead><tr><th contenteditable>연구 (연도)</th><th contenteditable>어디까지 답했나</th><th contenteditable>멈춘 지점</th></tr></thead><tbody><tr><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr><tr><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr><tr><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr><tr><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr></tbody></table><button class="more no-print" type="button" data-kind="tr">+ 행</button></div>
+        <div class="blk"><button class="rm no-print" type="button" title="항목 삭제">×</button><div class="sub" contenteditable>모두가 공통으로 비켜간 문제</div><ul class="slots"><li contenteditable></li></ul><button class="more no-print" type="button" data-kind="li">+ 줄</button></div>
+        <div class="blk"><button class="rm no-print" type="button" title="항목 삭제">×</button><div class="sub" contenteditable>본 연구가 한 단계 더 들어가는 지점</div><ul class="slots"><li contenteditable></li><li contenteditable></li></ul><button class="more no-print" type="button" data-kind="li">+ 줄</button></div>
+        <div class="addrow no-print"><button type="button" data-new="list">+ 목록 항목</button><button type="button" data-new="table">+ 표 항목</button></div>
         </div>
       </div>
 
@@ -283,38 +286,23 @@
         <div class="colhead"><h3>3.2 타당성</h3><em>왜 답이 나온다고 보는가</em></div>
         <div class="colbody">
           <div class="lead" contenteditable data-ph="요지 한 줄"></div>
-          <div class="sub">이론적 · 원리적 근거</div>
-          <ul class="slots"><li contenteditable></li><li contenteditable></li></ul>
-          <div class="sub">이미 확인한 것</div>
-          <table class="rows">
-            <tr><th>확인한 것</th><th style="width:34%">수치 / 관찰</th></tr>
-            <tr><td contenteditable></td><td contenteditable></td></tr>
-            <tr><td contenteditable></td><td contenteditable></td></tr>
-            <tr><td contenteditable></td><td contenteditable></td></tr>
-          </table>
-          <div class="sub">보유 자원 (데이터 · 장비 · 선행 성과)</div>
-          <ul class="slots"><li contenteditable></li></ul>
-          <div class="sub">깔고 있는 전제와 그 검증 방법</div>
-          <ul class="slots"><li contenteditable></li></ul>
+        <div class="blk"><button class="rm no-print" type="button" title="항목 삭제">×</button><div class="sub" contenteditable>이론적 · 원리적 근거</div><ul class="slots"><li contenteditable></li><li contenteditable></li></ul><button class="more no-print" type="button" data-kind="li">+ 줄</button></div>
+        <div class="blk"><button class="rm no-print" type="button" title="항목 삭제">×</button><div class="sub" contenteditable>이미 확인한 것</div><table class="rows"><thead><tr><th contenteditable>확인한 것</th><th contenteditable>수치 / 관찰</th></tr></thead><tbody><tr><td contenteditable></td><td contenteditable></td></tr><tr><td contenteditable></td><td contenteditable></td></tr><tr><td contenteditable></td><td contenteditable></td></tr></tbody></table><button class="more no-print" type="button" data-kind="tr">+ 행</button></div>
+        <div class="blk"><button class="rm no-print" type="button" title="항목 삭제">×</button><div class="sub" contenteditable>보유 자원 (데이터 · 장비 · 선행 성과)</div><ul class="slots"><li contenteditable></li></ul><button class="more no-print" type="button" data-kind="li">+ 줄</button></div>
+        <div class="blk"><button class="rm no-print" type="button" title="항목 삭제">×</button><div class="sub" contenteditable>깔고 있는 전제와 그 검증 방법</div><ul class="slots"><li contenteditable></li></ul><button class="more no-print" type="button" data-kind="li">+ 줄</button></div>
+        <div class="addrow no-print"><button type="button" data-new="list">+ 목록 항목</button><button type="button" data-new="table">+ 표 항목</button></div>
         </div>
       </div>
 
       <div class="col">
-        <div class="colhead"><h3>3.3 이해의 진전</h3><em>끝나면 무엇을 알게 되는가</em></div>
+        <div class="colhead"><h3>3.3 우수성</h3><em>무엇이 얼마나 나아지는가</em></div>
         <div class="colbody">
           <div class="lead" contenteditable data-ph="요지 한 줄"></div>
-          <div class="sub">새로 알게 되는 사실 (수치가 아니라 문장으로)</div>
-          <ul class="slots"><li contenteditable></li><li contenteditable></li></ul>
-          <div class="sub">가설이 틀렸을 때 알게 되는 것</div>
-          <ul class="slots"><li contenteditable data-ph="이 칸이 비면 실험이 아니라 시연입니다"></li></ul>
-          <div class="sub">판정 기준 (지표 · 데이터셋 · 비교 대상)</div>
-          <table class="rows">
-            <tr><th>지표</th><th style="width:24%">현 수준</th><th style="width:24%">판정선</th></tr>
-            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-            <tr><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr>
-          </table>
-          <div class="sub">다음 질문으로 이어지는 갈래</div>
-          <ul class="slots"><li contenteditable></li></ul>
+        <div class="blk"><button class="rm no-print" type="button" title="항목 삭제">×</button><div class="sub" contenteditable>새로 알게 되는 사실 (문장으로)</div><ul class="slots"><li contenteditable></li><li contenteditable></li></ul><button class="more no-print" type="button" data-kind="li">+ 줄</button></div>
+        <div class="blk"><button class="rm no-print" type="button" title="항목 삭제">×</button><div class="sub" contenteditable>가설이 틀렸을 때 알게 되는 것</div><ul class="slots"><li contenteditable data-ph="이 칸이 비면 실험이 아니라 시연입니다"></li></ul><button class="more no-print" type="button" data-kind="li">+ 줄</button></div>
+        <div class="blk"><button class="rm no-print" type="button" title="항목 삭제">×</button><div class="sub" contenteditable>성능 비교 기준</div><table class="rows"><thead><tr><th contenteditable>지표</th><th contenteditable>현 수준</th><th contenteditable>판정선</th></tr></thead><tbody><tr><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr><tr><td contenteditable></td><td contenteditable></td><td contenteditable></td></tr></tbody></table><button class="more no-print" type="button" data-kind="tr">+ 행</button></div>
+        <div class="blk"><button class="rm no-print" type="button" title="항목 삭제">×</button><div class="sub" contenteditable>다음 질문으로 이어지는 갈래</div><ul class="slots"><li contenteditable></li></ul><button class="more no-print" type="button" data-kind="li">+ 줄</button></div>
+        <div class="addrow no-print"><button type="button" data-new="list">+ 목록 항목</button><button type="button" data-new="table">+ 표 항목</button></div>
         </div>
       </div>
 
@@ -469,6 +457,50 @@
   });
 
   render();
+
+  var tri = document.querySelector('.tri');
+  tri.addEventListener('click', function (e) {
+    var t = e.target;
+
+    if (t.classList.contains('rm')) { t.closest('.blk').remove(); return; }
+
+    if (t.classList.contains('more')) {
+      var blk = t.closest('.blk');
+      if (t.dataset.kind === 'li') {
+        var li = document.createElement('li');
+        li.setAttribute('contenteditable', '');
+        blk.querySelector('ul.slots').appendChild(li);
+        li.focus();
+      } else {
+        var tb = blk.querySelector('tbody');
+        var row = tb.rows[tb.rows.length - 1].cloneNode(true);
+        for (var i = 0; i < row.cells.length; i++) row.cells[i].innerHTML = '';
+        tb.appendChild(row);
+        row.cells[0].focus();
+      }
+      return;
+    }
+
+    if (t.dataset && t.dataset.new) {
+      var body = t.closest('.colbody');
+      var nb = document.createElement('div');
+      nb.className = 'blk';
+      if (t.dataset.new === 'list') {
+        nb.innerHTML = '<button class="rm no-print" type="button" title="항목 삭제">×</button>' +
+          '<div class="sub" contenteditable data-ph="소제목"></div>' +
+          '<ul class="slots"><li contenteditable></li></ul>' +
+          '<button class="more no-print" type="button" data-kind="li">+ 줄</button>';
+      } else {
+        nb.innerHTML = '<button class="rm no-print" type="button" title="항목 삭제">×</button>' +
+          '<div class="sub" contenteditable data-ph="소제목"></div>' +
+          '<table class="rows"><thead><tr><th contenteditable>항목</th><th contenteditable>내용</th></tr></thead>' +
+          '<tbody><tr><td contenteditable></td><td contenteditable></td></tr></tbody></table>' +
+          '<button class="more no-print" type="button" data-kind="tr">+ 행</button>';
+      }
+      body.insertBefore(nb, t.closest('.addrow'));
+      nb.querySelector('.sub').focus();
+    }
+  });
 
   var btn = document.getElementById('toggleHint');
   btn.addEventListener('click', function () {
