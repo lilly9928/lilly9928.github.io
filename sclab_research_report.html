@@ -443,7 +443,6 @@
   periodEl.addEventListener('input', function () { echoEl.textContent = periodEl.value; });
 
   function addTrack(type) {
-    if (tracks.length >= 10) return;
     var ph = type === 'paper' ? '논문 단계' : '연구 단계';
     tracks.push({ type: type, label: '', ph: ph, out: '', cells: {} });
     render();
