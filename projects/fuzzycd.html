@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FuzzyCD: Fuzzy Contrastive Decoding to Alleviate Object Hallucination in Large Vision-Language Models</title>
+<meta name="description" content="FuzzyCD uses Takagi-Sugeno fuzzy inference to decide how strongly to apply contrastive decoding, mitigating object hallucination in LVLMs. ICCV 2025.">
+<meta property="og:title" content="FuzzyCD: Fuzzy Contrastive Decoding (ICCV 2025)">
+<meta property="og:description" content="Takagi-Sugeno fuzzy rules decide how much to contrast, per decoding step.">
+<meta property="og:image" content="images/FuzzyCD_overview.png">
+<meta name="theme-color" content="#fbfcf8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fbfcf8; --ink:#1d221d; --muted:#626a62; --faint:#8a918a; --rule:#e2e6dc;
+  --card:#ffffff; --teal:#2f8f86; --teal-soft:#e3f2ef; --amber:#d9950f; --amber-soft:#fbf0d6;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration-color:var(--rule);text-underline-offset:3px}
+a:hover{text-decoration-color:var(--teal)}
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:4px}
+img{max-width:100%;height:auto;display:block}
+
+.col,.wide{max-width:1040px;margin:0 auto;padding:0 1.5rem}
+
+/* Header */
+header{padding:4.5rem 0 2rem}
+.venue{display:inline-block;font-family:var(--mono);font-size:.8rem;color:var(--teal);border:1px solid var(--teal);border-radius:999px;padding:.15rem .7rem;margin-bottom:1.6rem}
+.mark{font-family:var(--mono);font-size:1rem;color:var(--muted);margin:0 0 .6rem}
+.mark b{color:var(--ink);font-weight:500}
+h1{font-size:clamp(1.9rem,4.6vw,3.1rem);line-height:1.15;letter-spacing:-.02em;font-weight:700;margin:0 0 1.4rem}
+.authors{margin:0 0 .2rem;font-size:1.02rem}
+.authors .sep{color:var(--faint);margin:0 .35rem}
+.affil{color:var(--muted);font-size:.95rem;margin:0 0 1.6rem}
+.links{display:flex;flex-wrap:wrap;gap:.5rem}
+.links a{font-family:var(--mono);font-size:.85rem;text-decoration:none;padding:.4rem .9rem;border:1px solid var(--ink);border-radius:6px;background:var(--card)}
+.links a:hover{background:var(--ink);color:var(--bg)}
+
+/* Figures */
+figure{margin:0}
+.plate{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:clamp(.6rem,2vw,1.5rem)}
+.plate img{margin:0 auto}
+figcaption{font-style:italic;color:var(--muted);font-size:.93rem;margin-top:.8rem}
+.hero-fig{margin:1.5rem auto 0}
+
+/* Sections */
+section{padding:4rem 0 0}
+.label{font-family:var(--mono);font-size:.8rem;color:var(--teal);margin:0 0 .4rem}
+h2{font-size:clamp(1.45rem,3vw,1.9rem);line-height:1.25;letter-spacing:-.015em;font-weight:700;margin:0 0 1rem}
+h3{font-size:1.1rem;font-weight:600;margin:2.5rem 0 .8rem}
+p{margin:0 0 1rem}
+.lead{font-size:1.08rem}
+
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:2.5rem;align-items:center}
+.split .text p:last-child{margin-bottom:0}
+
+/* Method animation */
+.fz{margin:1.2rem 0 0}
+.fz-flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem 1.2rem}
+.fz-p{position:relative;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:.6rem .6rem .4rem;opacity:.35;transition:opacity .4s,border-color .4s}
+.fz-p.on{opacity:1}
+.fz-p.cur{border-color:var(--teal)}
+.fz-p+.fz-p::before{content:"→";position:absolute;left:-1rem;top:50%;transform:translateY(-50%);color:var(--faint);font-size:.8rem}
+.fz-p:nth-child(3n+1)::before{display:none}
+.fz-h{font-family:var(--mono);font-size:.78rem;font-weight:500;margin:0 0 .3rem}
+.fz-h span{color:var(--faint);margin-right:.2rem}
+.fz svg{display:block;width:100%;height:auto;overflow:visible}
+.fz .t{font-family:var(--sans);font-size:10px;fill:var(--ink)}
+.fz .tm{fill:var(--muted)} .fz .tt{fill:var(--teal)}
+.fz .mono{font-family:var(--mono)} .fz .s8{font-size:8px} .fz .s9{font-size:9px} .fz .b{font-weight:600}
+.fz .ca{fill:var(--amber)} .fz .ct{fill:var(--teal)} .fz .cf{fill:var(--faint)}
+.fz .sa{stroke:var(--amber)} .fz .st{stroke:var(--teal)}
+.fz-lvlm{fill:var(--teal-soft);stroke:var(--teal)}
+.fz-curve{fill:none;stroke:var(--faint);stroke-width:1}
+.fz-ghost{fill:none;stroke:var(--teal);stroke-dasharray:3 2;stroke-width:.8}
+.fz-card{fill:var(--card)}
+.fz-sep{fill:none;stroke:var(--rule);stroke-dasharray:3 3}
+.fz-track{fill:var(--bg)}
+.fz-cell{fill:var(--teal);fill-opacity:0;stroke:var(--rule);transition:fill-opacity .6s}
+.fz-cell.amb{fill:var(--amber)}
+.fz-p.on .fz-cell{fill-opacity:var(--w)}
+.fz-ct{fill:var(--muted);transition:fill .6s}
+.fz-p.on .fz-ct.hi{fill:#fff}
+.fz-hl{fill:none;stroke:var(--ink);stroke-width:2}
+.fz-good{fill:#2e9e5b} .fz-bad{fill:#c0392b}
+.fz-mark{fill:none;stroke:#fff;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.fz-line{fill:none;stroke:var(--faint);stroke-width:1.2;stroke-dasharray:24;stroke-dashoffset:24;opacity:0;transition:stroke-dashoffset .6s,opacity .2s}
+.fz-p.on .fz-line{stroke-dashoffset:0;opacity:1;transition-delay:var(--d,0s)}
+.fz-bar{transform-box:fill-box;transform-origin:left center;transform:scaleX(var(--a,0));transition:transform .8s cubic-bezier(.3,.7,.3,1)}
+.fz-p.on .fz-bar{transform:scaleX(var(--b,1));transition-delay:var(--d,0s)}
+.fz-mk{transform:translateX(0);transition:transform 1s cubic-bezier(.3,.7,.3,1)}
+.fz-p.on .fz-mk{transform:translateX(var(--x))}
+.fz-late{opacity:0;transition:opacity .5s}
+.fz-p.on .fz-late{opacity:1;transition-delay:var(--d,.8s)}
+.fz-ctl{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:1rem 0 .6rem}
+.fz-steps{display:inline-flex;flex-wrap:wrap;gap:.25rem;background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:.25rem}
+.fz-ctl button{font:500 .8rem var(--mono);border:0;background:transparent;color:var(--muted);padding:.35rem .7rem;border-radius:5px;cursor:pointer}
+.fz-steps button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.fz-play{border:1px solid var(--rule)!important;background:var(--card)!important;min-width:4.5rem}
+.fz-cap{color:var(--muted);font-size:.95rem;min-height:3.2em;margin:0}
+.fz-cap b{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){.fz *,.mv *{transition:none!important}}
+
+/* Motivation figure */
+.mv{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:1.1rem 1.2rem}
+.mv-head{display:flex;align-items:center;gap:.5rem}
+.mv-sw{flex:none;width:40px;height:40px;border-radius:6px;background:linear-gradient(150deg,#4a86e8,#1f4fae);outline:2px solid var(--amber);outline-offset:2px;transition:opacity .4s}
+.mv-sw.f{outline-color:var(--teal);filter:blur(1.2px) saturate(.8)}
+.mv-op{font:500 1rem var(--mono);color:var(--muted);transition:opacity .4s}
+.mv[data-s="1"] .mv-sw.f,.mv[data-s="2"] .mv-sw:not(.f){opacity:.2}
+.mv[data-s="1"] .mv-op,.mv[data-s="2"] .mv-op{opacity:0}
+.mv-lab{margin-left:.6rem;min-width:0}
+.mv-t{font:500 .82rem var(--mono);overflow-wrap:anywhere}
+.mv-sub{font-size:.85rem;color:var(--muted)}
+.mv-q{font-size:.85rem;color:var(--muted);margin:.9rem 0 .3rem}
+.mv-row{display:grid;grid-template-columns:3.6rem minmax(0,1fr) 3.2rem;align-items:center;gap:.6rem;margin:.4rem 0;font-size:.9rem}
+.mv-row.top{font-weight:600}
+.mv-bar{height:14px;background:var(--bg);border-radius:3px;overflow:hidden}
+.mv-bar i{display:block;height:100%;width:0;border-radius:3px;background:var(--amber);transition:width .8s cubic-bezier(.3,.7,.3,1),background-color .4s}
+.mv[data-s="2"] .mv-bar i{background:var(--teal)}
+.mv[data-s="3"] .mv-bar i{background:var(--faint)}
+.mv[data-s="3"] .mv-row.top .mv-bar i{background:#c0392b}
+.mv-val{font:400 .85rem var(--mono);text-align:right}
+.mv-out{margin:.6rem 0 0;font-size:.9rem}
+.mv-out .ok{color:#2e9e5b;font-weight:600} .mv-out .bad{color:#c0392b;font-weight:600}
+.mv .fz-cap{font-size:.9rem;min-height:4.8em}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.2rem 0 0}
+.stat{border-top:2px solid var(--ink);padding-top:.6rem}
+.stat .v{font-size:1.6rem;font-weight:700;letter-spacing:-.01em}
+.stat .k{font-size:.88rem;color:var(--muted)}
+
+/* Tabs + tables */
+.tabs{display:inline-flex;gap:.25rem;background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:.25rem;margin:0 0 1rem}
+.tabs button{font:500 .85rem var(--mono);border:0;background:transparent;color:var(--muted);padding:.35rem .8rem;border-radius:5px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.table-wrap{overflow-x:auto;background:var(--card);border:1px solid var(--rule);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:.88rem;font-variant-numeric:tabular-nums}
+th,td{padding:.5rem .7rem;text-align:right;white-space:nowrap;border-bottom:1px solid var(--rule)}
+th:first-child,td:first-child{text-align:left}
+thead th{font-weight:600;color:var(--muted);font-size:.8rem}
+thead tr.grp th{color:var(--ink);font-size:.85rem;text-align:center;border-bottom:1px solid var(--rule)}
+tbody tr:last-child td{border-bottom:0}
+tr.ours td{background:var(--amber-soft)}
+tr.ours td:first-child{font-weight:600}
+td b{font-weight:700}
+.note{font-size:.82rem;color:var(--faint);margin:.5rem 0 0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.small-fig{max-width:560px}
+
+/* BibTeX */
+.bib{position:relative}
+.bib pre{margin:0;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:1.2rem 1.3rem;overflow-x:auto;font:400 .82rem/1.6 var(--mono)}
+.bib button{position:absolute;top:.6rem;right:.6rem;font:500 .78rem var(--mono);background:var(--bg);border:1px solid var(--rule);border-radius:5px;padding:.25rem .65rem;cursor:pointer;color:var(--ink)}
+
+footer{padding:4rem 0 3rem;color:var(--faint);font-size:.85rem}
+
+@media (max-width:800px){
+  .split,.pair{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr}
+  .fz-flow{grid-template-columns:1fr}
+  .fz-p:not(.cur){display:none}
+  .fz-p+.fz-p::before{display:none}
+  .fz-p svg{max-width:380px;margin:0 auto}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wide">
+    <span class="venue">ICCV 2025</span>
+    <p class="mark"><b>FuzzyCD</b> fuzzy contrastive decoding</p>
+    <h1>Fuzzy Contrastive Decoding to Alleviate Object Hallucination in Large Vision-Language Models</h1>
+    <p class="authors">
+      <a href="../index.html">Jieun Kim</a><span class="sep">·</span><span>Jinmyeong Kim</span><span class="sep">·</span><span>Yoonji Kim</span><span class="sep">·</span><a href="https://yonsei.elsevierpure.com/en/persons/sung-bae-cho/">Sung-Bae Cho</a>
+    </p>
+    <p class="affil">Yonsei University</p>
+    <nav class="links" aria-label="Resources">
+      <a href="https://openaccess.thecvf.com/content/ICCV2025/papers/Kim_Fuzzy_Contrastive_Decoding_to_Alleviate_Object_Hallucination_in_Large_Vision-Language_ICCV_2025_paper.pdf">Paper</a>
+      <a href="https://github.com/lilly9928/FuzzyCD">Code</a>
+      <a href="#bibtex">BibTeX</a>
+    </nav>
+  </div>
+  <div class="wide hero-fig">
+    <figure>
+      <div class="plate"><img src="images/FuzzyCD_overview.png" alt="FuzzyCD overview: original and filter-augmented images pass through the LVLM; top-1 log-probabilities are fuzzified, fuzzy rules produce rule weights, and amplified logits are used in contrastive decoding." width="4168" height="1322"></div>
+      <figcaption>Phase I reads the model's confidence on the original and filter-augmented images through Takagi-Sugeno fuzzy rules. Phase II uses the rule-weighted amplified logits in contrastive decoding.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<main>
+  <section id="motivation">
+    <div class="wide split">
+      <div class="text">
+        <p class="label">motivation</p>
+        <h2>The distorted input does not always hallucinate</h2>
+        <p>Contrastive decoding subtracts the logits of a distorted input x′ from the original logits. This assumes x′ amplifies hallucination. When it does not, the subtraction creates new hallucinations instead of removing them.</p>
+        <p>In this example, a filtered image makes the model <i>more</i> confident in the correct color. Subtracting its logits pushes a wrong color to the top. FuzzyCD first checks how confident the model is on each input, then decides how much to subtract.</p>
+      </div>
+      <div class="mv" id="mv">
+        <div class="mv-head">
+          <span class="mv-sw" aria-hidden="true"></span><span class="mv-op" aria-hidden="true">−</span><span class="mv-sw f" aria-hidden="true"></span>
+          <div class="mv-lab"><div class="mv-t"></div><div class="mv-sub"></div></div>
+        </div>
+        <p class="mv-q">Q: What color is this?</p>
+        <div class="mv-rows"></div>
+        <p class="mv-out"></p>
+        <div class="fz-ctl">
+          <button type="button" class="fz-play" aria-pressed="false">pause</button>
+          <div class="fz-steps"><button type="button">1 Original</button><button type="button">2 Filtered</button><button type="button">3 VCD</button></div>
+        </div>
+        <p class="fz-cap" aria-live="polite"></p>
+        <p class="note">Logits from Figure 5 of the paper. Step 3 applies Eq. 2 with α = 1.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="abstract">
+    <div class="col">
+      <p class="label">abstract</p>
+      <h2>Fuzzy rules decide how much to contrast</h2>
+      <p>Large vision-language models (LVLMs) often exhibit object hallucination, a phenomenon where models generate descriptions of non-existent objects within images. Prior methods have sought to mitigate this issue by adjusting model logits to reduce linguistic bias, but they often lack precise control over visual uncertainty, sometimes exacerbating hallucinations instead of mitigating them. To address this limitation, we propose a novel decoding strategy called <b>fuzzy contrastive decoding (FuzzyCD)</b> that uses Takagi-Sugeno fuzzy inference to refine hallucination control. FuzzyCD adaptively assigns weights to high-hallucination logits while mitigating unnecessary linguistic bias. Specifically, it transforms the log-probabilities of top-1 tokens from both standard and hallucination logits into a <i>confidence</i> linguistic fuzzy set. Through Takagi-Sugeno fuzzy inference, it dynamically adjusts hallucination logits to prevent the model from over-relying on spurious linguistic patterns. Experimental results on object hallucination datasets demonstrate that hallucination is mitigated by 11%p compared to conventional LVLMs. In-depth analyses highlight the effectiveness of FuzzyCD in enhancing the reliability of vision-language models.</p>
+    </div>
+  </section>
+
+  <section id="method">
+    <div class="col">
+      <p class="label">method</p>
+      <h2>From confidence to contrast, step by step</h2>
+
+      <div class="fz" id="fz">
+        <div class="fz-flow">
+          <div class="fz-p">
+            <div class="fz-h"><span>01</span> Input</div>
+            <svg viewBox="0 0 240 160" aria-hidden="true">
+              <defs>
+                <g id="fzScene">
+                  <rect width="56" height="48" rx="3" fill="#dccbaa"/>
+                  <rect y="32" width="56" height="16" fill="#a98c63"/>
+                  <rect x="5" y="14" width="8" height="22" rx="2" fill="#5f7f55"/>
+                  <rect x="21" y="6" width="20" height="36" rx="3" fill="#fbfbf7" stroke="#cfcab8" stroke-width=".6"/>
+                  <rect x="21" y="26" width="20" height="16" fill="#f2c21b"/>
+                  <rect x="24" y="12" width="14" height="4" rx="1" fill="#2c4a8a"/>
+                </g>
+                <filter id="fzFilt"><feColorMatrix type="saturate" values=".3"/><feGaussianBlur stdDeviation=".8"/></filter>
+                <marker id="fzArr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0L8,4L0,8z" class="cf"/></marker>
+              </defs>
+              <rect x="10" y="14" width="60" height="52" rx="4" class="sa" fill="none" stroke-width="2"/>
+              <use href="#fzScene" x="12" y="16"/>
+              <text x="40" y="80" class="t tm s9" text-anchor="middle">x₁ original</text>
+              <rect x="18" y="86" width="60" height="52" rx="4" class="st fz-card" stroke-width="1"/>
+              <rect x="14" y="90" width="60" height="52" rx="4" class="st fz-card" stroke-width="1"/>
+              <rect x="10" y="94" width="60" height="52" rx="4" class="st" fill="none" stroke-width="2"/>
+              <g filter="url(#fzFilt)"><use href="#fzScene" x="12" y="96"/></g>
+              <text x="44" y="158" class="t tm s9" text-anchor="middle">x₂ filtered × n</text>
+              <path d="M72 40H101" class="fz-line" marker-end="url(#fzArr)"/>
+              <path d="M80 116H101" class="fz-line" marker-end="url(#fzArr)"/>
+              <rect x="104" y="18" width="34" height="128" rx="8" class="fz-lvlm"/>
+              <text transform="translate(125 82) rotate(-90)" class="t b" text-anchor="middle">LVLM</text>
+              <path d="M140 46H158" class="fz-line" style="--d:.5s" marker-end="url(#fzArr)"/>
+              <path d="M140 116H158" class="fz-line" style="--d:.5s" marker-end="url(#fzArr)"/>
+              <g class="fz-late" style="--d:1s">
+                <circle cx="166" cy="46" r="4" class="ca"/><text x="174" y="49" class="t s9 mono">log p₁</text>
+                <circle cx="166" cy="116" r="4" class="ct"/><text x="174" y="119" class="t s9 mono">log p₂</text>
+                <text x="162" y="78" class="t tm s8">top-1 token</text>
+                <text x="162" y="90" class="t tm s8">= confidence</text>
+              </g>
+            </svg>
+          </div>
+
+          <div class="fz-p">
+            <div class="fz-h"><span>02</span> Fuzzify</div>
+            <svg viewBox="0 0 240 160" id="fzFuzz" aria-hidden="true"></svg>
+          </div>
+
+          <div class="fz-p">
+            <div class="fz-h"><span>03</span> Rule weights</div>
+            <svg viewBox="0 0 240 160" id="fzW" aria-hidden="true"></svg>
+          </div>
+
+          <div class="fz-p">
+            <div class="fz-h"><span>04</span> Rule outputs</div>
+            <svg viewBox="0 0 240 160" id="fzO" aria-hidden="true"></svg>
+          </div>
+
+          <div class="fz-p">
+            <div class="fz-h"><span>05</span> Aggregate</div>
+            <svg viewBox="0 0 240 160" aria-hidden="true">
+              <text x="120" y="12" class="t mono s9" text-anchor="middle">Amplified = Σ wⱼ·yⱼ / Σ wⱼ</text>
+              <text x="10" y="32" class="t tm s8">filtered logits q</text>
+              <rect x="10" y="38" width="90" height="8" rx="2" class="fz-ghost"/>
+              <rect x="10" y="50" width="120" height="8" rx="2" class="fz-ghost"/>
+              <rect x="10" y="62" width="150" height="8" rx="2" class="fz-ghost"/>
+              <rect x="10" y="38" width="90" height="8" rx="2" class="ct fz-bar" style="--a:1;--b:.02;--d:.5s"/>
+              <rect x="10" y="50" width="120" height="8" rx="2" class="ct fz-bar" style="--a:1;--b:.02;--d:.6s"/>
+              <rect x="10" y="62" width="150" height="8" rx="2" class="ct fz-bar" style="--a:1;--b:.02;--d:.7s"/>
+              <text x="200" y="59" class="t mono fz-late" style="--d:.3s;font-size:14px" text-anchor="middle">× 0</text>
+              <text x="120" y="86" class="t tm s8 fz-late" style="--d:1.1s" text-anchor="middle">Rule 9 (High ∧ High) dominates → not amplified</text>
+              <path d="M10 96H230" class="fz-sep"/>
+              <text x="10" y="110" class="t tm s8">with n filters, keep the max JS(P‖Q)</text>
+              <text x="10" y="123" class="t s8 mono">f₁</text><rect x="28" y="117" width="150" height="8" rx="2" class="fz-track"/>
+              <text x="10" y="135" class="t s8 mono">f₂</text><rect x="28" y="129" width="150" height="8" rx="2" class="fz-track"/>
+              <text x="10" y="147" class="t s8 mono">f₃</text><rect x="28" y="141" width="150" height="8" rx="2" class="fz-track"/>
+              <rect x="28" y="117" width="150" height="8" rx="2" class="ct fz-bar" style="--b:.35;--d:1.4s"/>
+              <rect x="28" y="129" width="150" height="8" rx="2" class="ct fz-bar" style="--b:.8;--d:1.4s"/>
+              <rect x="28" y="141" width="150" height="8" rx="2" class="ct fz-bar" style="--b:.5;--d:1.4s"/>
+              <g class="fz-late" style="--d:2.2s">
+                <rect x="26" y="127" width="126" height="12" rx="3" class="fz-hl"/>
+                <text x="186" y="136" class="t b s8 tt">remove</text>
+              </g>
+            </svg>
+          </div>
+
+          <div class="fz-p">
+            <div class="fz-h"><span>06</span> Contrast</div>
+            <svg viewBox="0 0 240 160" aria-hidden="true">
+              <text x="120" y="12" class="t mono s8" text-anchor="middle">(1+α)·logits(y|x,v) − α·amplified</text>
+              <text x="120" y="26" class="t tm s8" text-anchor="middle">Q: What is this a picture of?</text>
+              <text x="10" y="44" class="t b s9">FuzzyCD</text>
+              <text x="10" y="57" class="t s8">Sugar</text><rect x="54" y="50" width="90" height="9" rx="2" class="ca"/>
+              <text x="10" y="69" class="t s8">Domino</text><rect x="54" y="62" width="70" height="9" rx="2" class="ca"/>
+              <g class="fz-late" style="--d:.5s">
+                <text x="170" y="65" class="t b">sugar</text>
+                <circle cx="210" cy="61" r="6" class="fz-good"/><path d="M207 61l2 2 4-4" class="fz-mark"/>
+              </g>
+              <text x="10" y="94" class="t b s9 tm">VCD</text>
+              <text x="10" y="107" class="t s8">Sugar</text><rect x="54" y="100" width="100" height="9" rx="2" class="ca fz-bar" style="--a:.9;--b:.12;--d:.3s"/>
+              <text x="10" y="119" class="t s8">Domino</text><rect x="54" y="112" width="100" height="9" rx="2" class="ca fz-bar" style="--a:.7;--b:.1;--d:.3s"/>
+              <text x="10" y="131" class="t s8">k</text><rect x="54" y="124" width="100" height="9" rx="2" class="ca fz-bar" style="--a:.25;--b:.3;--d:.3s"/>
+              <g class="fz-late" style="--d:1.2s">
+                <text x="170" y="120" class="t b">k</text>
+                <circle cx="186" cy="116" r="6" class="fz-bad"/><path d="M183.5 113.5l5 5m0-5l-5 5" class="fz-mark"/>
+              </g>
+              <text x="120" y="154" class="t tm s8" text-anchor="middle">α = 1, β = 0.1 · example from Figure 8</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="fz-ctl">
+          <button type="button" class="fz-play" aria-pressed="false">pause</button>
+          <div class="fz-steps">
+            <button type="button">1 Input</button><button type="button">2 Fuzzify</button><button type="button">3 Weights</button><button type="button">4 Outputs</button><button type="button">5 Aggregate</button><button type="button">6 Contrast</button>
+          </div>
+        </div>
+        <p class="fz-cap" aria-live="polite"></p>
+      </div>
+
+      <div class="split" style="margin-top:1rem">
+      <div class="text">
+      <h3>Why log-probability</h3>
+      <p>To choose the confidence score, a simple classifier trained on VizWiz detects hallucination in LLaVA-1.5 from five logit statistics. Probability and log-probability reach the highest AUC in every setting.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr class="grp"><th></th><th>VizWiz</th><th colspan="3">POPE</th></tr>
+            <tr><th>Criterion</th><th>val</th><th>random</th><th>popular</th><th>adversarial</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Logits-mean</td><td>0.58</td><td>0.24</td><td>0.26</td><td>0.31</td></tr>
+            <tr><td>Logits-min</td><td>0.56</td><td>0.25</td><td>0.27</td><td>0.31</td></tr>
+            <tr><td>Logits-max</td><td>0.70</td><td>0.69</td><td>0.72</td><td>0.72</td></tr>
+            <tr><td>Probability</td><td><b>0.75</b></td><td><b>0.79</b></td><td><b>0.78</b></td><td><b>0.76</b></td></tr>
+            <tr class="ours"><td>Log-probability</td><td><b>0.75</b></td><td><b>0.79</b></td><td><b>0.78</b></td><td><b>0.76</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">Hallucination detection AUC, LLaVA-1.5. Highlighted: the score FuzzyCD uses.</p>
+      </div>
+      <figure>
+        <div class="plate"><img src="images/FuzzyCD_kdeplot.png" alt="Density plots of logits mean, logits max, probability and log-probability for correct and incorrect answers." width="3361" height="2298"></div>
+      </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="results">
+    <div class="col">
+      <p class="label">results</p>
+      <h2>Best accuracy in every POPE setting</h2>
+      <p class="lead">Evaluated on POPE, MME and ROPE against VCD, ICD, VDD and OPERA, with LLaVA-1.5 and InstructBLIP (Vicuna-7B).</p>
+      <div class="stats">
+        <div class="stat"><div class="v">6 / 6</div><div class="k">POPE settings with the highest accuracy</div></div>
+        <div class="stat"><div class="v">+5.43</div><div class="k">avg. POPE accuracy gain, LLaVA-1.5</div></div>
+        <div class="stat"><div class="v">641.66</div><div class="k">MME total, highest among methods</div></div>
+      </div>
+
+      <h3>POPE (MSCOCO)</h3>
+      <div class="tabs" role="tablist" aria-label="POPE setting">
+        <button role="tab" aria-selected="true" data-set="Random">Random</button>
+        <button role="tab" aria-selected="false" data-set="Popular">Popular</button>
+        <button role="tab" aria-selected="false" data-set="Adversarial">Adversarial</button>
+      </div>
+      <div class="table-wrap">
+        <table id="pope">
+          <thead>
+            <tr class="grp"><th></th><th colspan="4">LLaVA-1.5</th><th colspan="4">InstructBLIP</th></tr>
+            <tr><th>Method</th><th>Acc.</th><th>Prec.</th><th>Rec.</th><th>F1</th><th>Acc.</th><th>Prec.</th><th>Rec.</th><th>F1</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="note">Bold: best per column. Highlighted: FuzzyCD.</p>
+    </div>
+
+    <div class="col">
+      <h3>MME, LLaVA-1.5</h3>
+      <p>Largest gains on object-level tasks: Existence +19.33, Count +56.66.</p>
+      <div class="table-wrap">
+          <table>
+            <thead>
+              <tr class="grp"><th></th><th colspan="2">Object</th><th colspan="2">Attribute</th><th></th></tr>
+              <tr><th>Method</th><th>Existence</th><th>Count</th><th>Position</th><th>Color</th><th>Total</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Default</td><td>175.67</td><td>106.67</td><td>114.00</td><td>160.00</td><td>556.34</td></tr>
+              <tr><td>+ VCD</td><td>184.66</td><td>138.33</td><td><b>128.67</b></td><td>153.00</td><td>604.66</td></tr>
+              <tr><td>+ VDD</td><td>190.00</td><td>138.33</td><td>126.67</td><td><b>165.00</b></td><td>620.00</td></tr>
+              <tr class="ours"><td>+ FuzzyCD</td><td><b>195.00</b></td><td><b>163.33</b></td><td>123.33</td><td>160.00</td><td><b>641.66</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      <h3>ROPE, LLaVA-1.5</h3>
+      <p>Best on all six splits. Single-object Hom. 31.88 → 57.88.</p>
+      <div class="table-wrap">
+          <table>
+            <thead>
+              <tr class="grp"><th></th><th colspan="3">Multi-object</th><th colspan="3">Single-object</th></tr>
+              <tr><th>Method</th><th>Wild</th><th>Hom.</th><th>Het.</th><th>Wild</th><th>Hom.</th><th>Het.</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>LLaVA-1.5</td><td>13.96</td><td>31.88</td><td>3.98</td><td>13.96</td><td>31.88</td><td>3.98</td></tr>
+              <tr><td>+ VCD</td><td>13.57</td><td>28.68</td><td>6.37</td><td>24.76</td><td>48.33</td><td>9.84</td></tr>
+              <tr><td>+ ICD</td><td>14.35</td><td>32.63</td><td>5.69</td><td>22.92</td><td>45.47</td><td>10.24</td></tr>
+              <tr><td>+ VCC</td><td>17.80</td><td>40.77</td><td>7.40</td><td>27.49</td><td>52.12</td><td>11.06</td></tr>
+              <tr><td>+ OPERA</td><td>13.20</td><td>37.14</td><td>3.82</td><td>13.20</td><td>37.14</td><td>3.82</td></tr>
+              <tr class="ours"><td>+ FuzzyCD</td><td><b>21.12</b></td><td><b>46.44</b></td><td><b>7.45</b></td><td><b>29.01</b></td><td><b>57.88</b></td><td><b>11.30</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+    </div>
+    <div class="col">
+      <div class="pair" style="margin-top:1rem">
+        <div>
+          <h3>Across model families and scales</h3>
+          <p>POPE accuracy improves on all five LVLMs from 7B to 72B, most on 7B to 13B models.</p>
+          <figure><div class="plate"><img src="images/FuzzyCD_model_scale_fuzzycd.png" alt="Accuracy of base decoding and FuzzyCD across five LVLMs: LLaVA 1.5 7B +5.12, InstructBLIP 7B +5.41, LLaVA-NeXT 13B +4.46, QwenVL 32B +0.72, QwenVL 72B +1.05." width="590" height="390"></div></figure>
+        </div>
+        <div>
+          <h3>Choice of image filter</h3>
+          <p>POPE accuracy stays within 86.5 to 89.3 across five filters. Sobel is best.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Filter</th><th>Acc. (%)</th></tr></thead>
+              <tbody>
+                <tr><td>Bilateral</td><td>86.86</td></tr>
+                <tr><td>Median</td><td>86.53</td></tr>
+                <tr><td>Sobel</td><td><b>89.33</b></td></tr>
+                <tr><td>Sharpen (default)</td><td>88.76</td></tr>
+                <tr><td>Gaussian</td><td>87.83</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="split" style="margin-top:1rem">
+        <div class="text">
+          <h3>Qualitative example</h3>
+          <p>Asked “What is this a picture of?”, the model is confident on both the original and the filtered image (High 0.99 and 0.91). Rule 9 gets the highest weight, which signals no hallucination, so the filtered logits are not amplified and FuzzyCD answers <i>sugar</i>. Standard contrastive decoding suppresses Sugar and Domino, the top candidates on both inputs, and answers <i>k</i>.</p>
+        </div>
+        <figure>
+          <div class="plate"><img src="images/FuzzyCD_example.png" alt="Rule weights for the Domino Sugar example: Rule 9 is highest; FuzzyCD multiplies the amplified logits by zero and answers sugar, while visual contrastive decoding answers k." width="2494" height="2249" loading="lazy"></div>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="bibtex">
+    <div class="col">
+      <p class="label">cite</p>
+      <h2>BibTeX</h2>
+      <div class="bib">
+        <button type="button" id="copyBib">copy</button>
+<pre id="bibText">@inproceedings{kim2025fuzzycd,
+  title     = {Fuzzy Contrastive Decoding to Alleviate Object Hallucination
+               in Large Vision-Language Models},
+  author    = {Kim, Jieun and Kim, Jinmyeong and Kim, Yoonji and Cho, Sung-Bae},
+  booktitle = {Proceedings of the IEEE/CVF International Conference
+               on Computer Vision (ICCV)},
+  pages     = {20572--20581},
+  year      = {2025},
+  doi       = {10.1109/ICCV51701.2025.01913}
+}</pre>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="col">Yonsei University · <a href="https://github.com/lilly9928/FuzzyCD">Code on GitHub</a></div>
+</footer>
+
+<script>
+(function(){
+  var M=['Default','+ VCD','+ ICD','+ VDD','+ OPERA','+ FuzzyCD'];
+  var D={
+    Random:[[82.90,92.00,72.06,80.82,80.63,81.19,79.73,80.46],[87.73,91.42,72.80,87.16,84.53,88.55,79.32,83.68],[83.66,80.66,80.73,88.77,86.43,92.01,80.73,85.61],[83.52,89.25,76.22,82.22,80.96,82.05,72.26,80.63],[86.26,97.14,74.73,84.47,86.56,90.72,81.46,85.84],[88.97,93.20,84.07,88.40,86.66,91.16,81.20,85.89]],
+    Popular:[[81.00,87.88,72.06,79.19,80.50,80.80,80.00,80.40],[85.38,86.92,83.28,85.06,81.47,82.89,79.32,81.07],[80.46,76.39,88.83,82.14,82.93,84.45,80.73,82.55],[85.87,94.32,76.33,84.38,78.90,78.35,79.86,79.10],[85.26,94.64,74.73,83.53,80.93,75.46,91.66,82.78],[86.10,91.81,79.26,85.08,85.20,88.26,81.20,84.58]],
+    Adversarial:[[78.60,82.89,72.06,77.10,77.40,76.11,79.87,77.94],[80.88,79.45,83.29,81.33,79.56,79.67,79.39,79.52],[76.07,70.77,89.47,79.03,80.87,80.95,80.73,80.84],[83.52,89.25,76.22,82.22,81.63,75.70,81.00,78.26],[83.23,89.84,74.93,81.71,76.33,70.15,91.66,79.47],[83.93,88.61,77.86,82.89,81.90,82.35,81.20,81.77]]
+  };
+  var tb=document.querySelector('#pope tbody');
+  function render(k){
+    var rows=D[k],best=[];
+    for(var c=0;c<8;c++){best[c]=Math.max.apply(null,rows.map(function(r){return r[c]}))}
+    tb.innerHTML=rows.map(function(r,i){
+      return '<tr'+(i===5?' class="ours"':'')+'><td>'+M[i]+'</td>'+r.map(function(v,c){var t=v.toFixed(2);return '<td>'+(v===best[c]?'<b>'+t+'</b>':t)+'</td>'}).join('')+'</tr>';
+    }).join('');
+  }
+  var btns=document.querySelectorAll('.tabs button');
+  btns.forEach(function(b){b.addEventListener('click',function(){
+    btns.forEach(function(x){x.setAttribute('aria-selected',x===b?'true':'false')});render(b.dataset.set);
+  })});
+  render('Random');
+
+  // Step-through player shared by the motivation and method figures
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function stepper(root,CAP,onGo){
+    var P=root.querySelectorAll('.fz-p'),B=root.querySelectorAll('.fz-steps button'),
+        cap=root.querySelector('.fz-cap'),play=root.querySelector('.fz-play'),
+        N=B.length,stage=0,timer=null,playing=!reduce,visible=false;
+    function go(s){
+      stage=s;
+      P.forEach(function(p,i){p.classList.toggle('on',i<s);p.classList.toggle('cur',i===s-1)});
+      B.forEach(function(b,i){b.setAttribute('aria-selected',i===s-1?'true':'false')});
+      cap.innerHTML=CAP[s-1];
+      if(onGo)onGo(s);
+    }
+    function schedule(){
+      clearTimeout(timer);
+      if(playing&&visible)timer=setTimeout(function(){go(stage>=N?1:stage+1);schedule()},stage===N?5000:3600);
+    }
+    function setPlaying(v){playing=v;play.textContent=v?'pause':'play';play.setAttribute('aria-pressed',v?'false':'true');schedule()}
+    B.forEach(function(b,i){b.addEventListener('click',function(){go(i+1);setPlaying(false)})});
+    play.addEventListener('click',function(){if(!playing&&stage===N)go(1);setPlaying(!playing)});
+    go(reduce?N:1);setPlaying(playing);
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(e){visible=e[0].isIntersecting;schedule()},{threshold:.4}).observe(root);
+    }else{visible=true;schedule()}
+  }
+
+  // Motivation: Figure 5 logits, then VCD with alpha = 1 (Eq. 2)
+  var mv=document.getElementById('mv'),TOK=['Blue','Green','Purple'],
+      MS=[
+        {t:'logits(y | x, v)',s:'original image',v:[21.20,18.12,17.31]},
+        {t:'logits(y | x, v′)',s:'filtered image',v:[23.82,16.62,18.01]},
+        {t:'2·logits(y|x,v) − logits(y|x,v′)',s:'VCD, α = 1',v:[18.58,19.62,16.61]}
+      ];
+  mv.querySelector('.mv-rows').innerHTML=TOK.map(function(t){
+    return '<div class="mv-row"><span>'+t+'</span><span class="mv-bar"><i></i></span><span class="mv-val"></span></div>';
+  }).join('');
+  var MR=mv.querySelectorAll('.mv-row');
+  stepper(mv,[
+    '<b>Original image.</b> The model ranks the correct color, Blue, first.',
+    '<b>Filtered image.</b> The filter was meant to amplify hallucination, but the model is even more confident in Blue (21.20 → 23.82).',
+    '<b>Contrastive decoding.</b> Subtracting the filtered logits erases Blue’s lead. Green now ranks first: a new hallucination.'
+  ],function(s){
+    var d=MS[s-1],top=d.v.indexOf(Math.max.apply(null,d.v));
+    mv.setAttribute('data-s',s);
+    mv.querySelector('.mv-t').textContent=d.t;
+    mv.querySelector('.mv-sub').textContent=d.s;
+    MR.forEach(function(r,i){
+      r.querySelector('i').style.width=(d.v[i]/25*100)+'%';
+      r.querySelector('.mv-val').textContent=d.v[i].toFixed(2);
+      r.classList.toggle('top',i===top);
+    });
+    mv.querySelector('.mv-out').innerHTML='Top-1: '+TOK[top]+(top===0?' <span class="ok">✓ correct</span>':' <span class="bad">✗ hallucination</span>');
+  });
+
+  // Method: fuzzify panel. Gaussian memberships centered at mean - sd, mean, mean + sd (Eq. 4)
+  var C=[40,82,124],SD=42;
+  var gauss=function(c,base){var d='';for(var x=8;x<=152;x+=2){d+=(x===8?'M':'L')+x+','+(base-38*Math.exp(-(x-c)*(x-c)/(2*SD*SD))).toFixed(1)}return d};
+  var IN=[{n:'x₁',c:'a',v:[.99,.67,.17],x:118,base:74},{n:'x₂',c:'t',v:[.91,.65,.23],x:106,base:142}],
+      fs='<text x="6" y="11" class="t mono s8">μₖ(x) = exp(−(x − (x̄ + kσ))² / 2σ²)</text>';
+  IN.forEach(function(p){
+    var b=p.base;
+    fs+='<path d="M8 '+b+'H152" class="fz-sep"/>';
+    C.forEach(function(c,i){fs+='<path d="'+gauss(c,b)+'" class="fz-curve"/><text x="'+c+'" y="'+(b-42)+'" class="t tm s8" text-anchor="middle">'+['Low','Mid','High'][i]+'</text>'});
+    fs+='<g class="fz-mk" style="--x:'+(p.x-8)+'px"><path d="M8 '+b+'V'+(b-44)+'" class="s'+p.c+'" stroke-width="1.5"/><circle cx="8" cy="'+b+'" r="2.5" class="c'+p.c+'"/></g>';
+    fs+='<text x="164" y="'+(b-40)+'" class="t b s9 c'+p.c+'">'+p.n+'</text>';
+    ['H','M','L'].forEach(function(lab,r){
+      var y=b-33+r*12,v=p.v[r];
+      fs+='<text x="164" y="'+(y+7)+'" class="t tm s8">'+lab+'</text><rect x="174" y="'+y+'" width="38" height="8" rx="2" class="fz-track"/>'+
+          '<rect x="174" y="'+y+'" width="38" height="8" rx="2" class="c'+p.c+' fz-bar" style="--b:'+v+';--d:.8s"/>'+
+          '<text x="215" y="'+(y+7)+'" class="t s8 mono fz-late" style="--d:1.3s">'+v.toFixed(2)+'</text>';
+    });
+  });
+  fs+=C.map(function(c,i){return '<text x="'+c+'" y="154" class="t tm s8" text-anchor="middle">'+['x̄−σ','x̄','x̄+σ'][i]+'</text>'}).join('');
+  document.getElementById('fzFuzz').innerHTML=fs;
+
+  // Method: 3x3 rule grids. Rows = x1 (L, M, H), columns = x2 (L, M, H); rule n = row*3 + col + 1
+  var M1=[.17,.67,.99],M2=[.23,.65,.91],X0=70,Y0=24,CS=34;
+  function grid(cell,foot,hl){
+    var g='<text x="'+(X0+51)+'" y="9" class="t b s9 ct" text-anchor="middle">x₂</text><text x="'+(X0-26)+'" y="'+(Y0+55)+'" class="t b s9 ca" text-anchor="end">x₁</text>';
+    for(var i=0;i<3;i++){
+      g+='<text x="'+(X0+17+i*CS)+'" y="20" class="t tm s8" text-anchor="middle">'+'LMH'[i]+'</text><text x="'+(X0-6)+'" y="'+(Y0+21+i*CS)+'" class="t tm s8" text-anchor="end">'+'LMH'[i]+'</text>';
+      for(var j=0;j<3;j++){
+        var n=i*3+j,c=cell(i,j,n),x=X0+j*CS,y=Y0+i*CS;
+        g+='<rect x="'+x+'" y="'+y+'" width="'+CS+'" height="'+CS+'" class="fz-cell'+(c.amb?' amb':'')+'" style="--w:'+c.w+';transition-delay:'+(n*.08).toFixed(2)+'s"/>'+
+           '<text x="'+(x+17)+'" y="'+(y+14)+'" class="t s8 fz-ct'+(c.w>.5?' hi':'')+'" text-anchor="middle">R'+(n+1)+'</text>'+
+           '<text x="'+(x+17)+'" y="'+(y+27)+'" class="t s8 mono fz-ct'+(c.w>.5?' hi':'')+'" text-anchor="middle">'+c.label+'</text>';
+      }
+    }
+    return g+'<rect x="'+(X0+hl[1]*CS)+'" y="'+(Y0+hl[0]*CS)+'" width="'+CS+'" height="'+CS+'" class="fz-hl fz-late" style="--d:1.1s"/>'+
+      '<text x="'+(X0+51)+'" y="150" class="t mono s9" text-anchor="middle">'+foot+'</text>';
+  }
+  // Eq. 5: w = mu(x1) * mu(x2)
+  document.getElementById('fzW').innerHTML=grid(function(i,j){
+    var w=M1[i]*M2[j];return {w:w.toFixed(2),label:w.toFixed(2).replace(/^0/,'')};
+  },'wᵢ = μₖ(x₁) · μₖ′(x₂)',[2,2]);
+  // Eq. 6: rules 1,4 -> a_high; 2,5 -> a_medium; 3 -> a_reduce = -gamma; 6-9 -> a_low
+  var CAT=['high','mid','−γ','high','mid','low','low','low','low'],OP={high:.8,mid:.5,low:.18,'−γ':.85};
+  document.getElementById('fzO').innerHTML=grid(function(i,j,n){
+    return {w:OP[CAT[n]],label:CAT[n],amb:n===2};
+  },'yᵢ = aᵢ · q  (q: filtered logits)',[0,2]);
+
+  stepper(document.getElementById('fz'),[
+    '<b>Input.</b> The original image x₁ and n filter-augmented copies x₂ pass through the LVLM. The log-probability of each top-1 next token is the model’s confidence score.',
+    '<b>Fuzzify.</b> Three Gaussian membership functions centered at x̄ − σ, x̄ and x̄ + σ map each confidence score to Low / Mid / High (Eq. 4). x̄ and σ come from a 10% sample of the dataset.',
+    '<b>Rule weights.</b> Nine rules cover every Low / Mid / High pair, and each rule weight is the product of the two memberships (Eq. 5). Both inputs are High here, so Rule 9 gets the largest weight.',
+    '<b>Rule outputs.</b> Each rule scales the filtered logits q by a coefficient (Eq. 6). Rule 3 (x₁ Low, x₂ High) uses −γ: when only the filtered image is confident, its logits are reduced instead of amplified.',
+    '<b>Aggregate.</b> The weighted average of rule outputs gives the amplified logits (Eq. 7). Across n filters, FuzzyCD removes the one that differs most from the original, measured by JS divergence. Here Rule 9 dominates, so nothing is amplified.',
+    '<b>Contrast.</b> Decoding uses (1 + α) · logits − α · amplified logits, over tokens with at least β times the top probability (Eq. 11–12). FuzzyCD keeps <i>sugar</i>. VCD suppresses Sugar and Domino, which rank high on both inputs, and answers <i>k</i>.'
+  ]);
+
+  var cb=document.getElementById('copyBib'),bt=document.getElementById('bibText');
+  cb.addEventListener('click',function(){
+    var t=bt.innerText,done=function(){cb.textContent='copied';setTimeout(function(){cb.textContent='copy'},1500)};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done)}
+  });
+})();
+</script>
+</body>
+</html>
