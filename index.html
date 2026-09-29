@@ -1,451 +1,374 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-  <title>Jieun Kim</title>
-
-  <meta name="author" content="Jon Barron">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Jieun Kim">
+  <meta name="description" content="Jieun Kim, Ph.D. student at Yonsei University Soft Computing Lab. Trustworthy multimodal AI: perception, reasoning, and agents.">
+  <title>Jieun Kim</title>
   <link rel="shortcut icon" href="images/hamster-face.png" type="image/x-icon">
-  <link rel="stylesheet" type="text/css" href="stylesheet.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fffdfa;
+      --text: #2b2622;
+      --muted: #7b7169;
+      --line: #ede6dc;
+      --accent: #8c5a3c;
+      --g: #7a5d3c;  --g-soft: #f4ecdf;
+      --s: #56704d;  --s-soft: #e9efe3;
+      --r: #8a5648;  --r-soft: #f5e8e3;
+      --o: #7b7169;  --o-soft: #f3efe9;
+      --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+      --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+    }
+    html { color-scheme: light; scroll-behavior: smooth; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 17px; line-height: 1.65; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    p { margin: 0; }
 
+    .wrap { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+    .hero { background: var(--bg); }
+    .hero .wrap { padding-top: 56px; padding-bottom: 8px; }
+    main.wrap { padding-bottom: 40px; }
+
+    /* Intro */
+    .intro { display: grid; grid-template-columns: 1fr 210px; gap: 40px; align-items: center; }
+    .name { font-family: var(--serif); font-size: 2.6rem; font-weight: 700; line-height: 1.1; margin: 0 0 8px; letter-spacing: -0.01em; }
+    .affil { color: var(--muted); margin-bottom: 18px; }
+    .bio { font-size: 1.1rem; max-width: 60ch; margin-bottom: 16px; }
+    .internship { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px; padding: 7px 14px; background: #f4ecdf; color: #6f5334; border-radius: 999px; font-size: 0.97rem; }
+    .internship::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: #c49a6c; }
+    .links { display: flex; flex-wrap: wrap; gap: 8px 18px; font-weight: 500; }
+    .profile-photo { width: 210px; height: 210px; object-fit: cover; border-radius: 12px; display: block; border: 4px solid #ffffff; box-shadow: 0 4px 18px rgba(90,66,44,.16); }
+
+    section { margin-top: 52px; }
+    h2 { font-family: var(--serif); font-size: 1.65rem; font-weight: 600; margin: 0 0 18px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+    h3 { font-size: 1rem; font-weight: 600; color: var(--muted); margin: 32px 0 4px; }
+
+    /* Research */
+    .axes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .axis { display: flex; flex-direction: column; padding: 20px; border-radius: 14px; border-top: 0; }
+    .axis.g { background: var(--g-soft); border-color: var(--g); }
+    .axis.s { background: var(--s-soft); border-color: var(--s); }
+    .axis.r { background: var(--r-soft); border-color: var(--r); }
+    .axis-name { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; }
+    .g .axis-name, .g .axis-go { color: var(--g); }
+    .s .axis-name, .s .axis-go { color: var(--s); }
+    .r .axis-name, .r .axis-go { color: var(--r); }
+    .axis-q { font-size: 1rem; font-weight: 500; margin-bottom: 10px; }
+    .axis-desc { font-size: 0.95rem; color: var(--muted); margin-bottom: 16px; }
+        .axis-go { margin-top: auto; align-self: flex-start; font: inherit; font-size: 0.85rem; font-weight: 600; background: #ffffff; border: 1px solid var(--line); border-radius: 6px; padding: 4px 12px; cursor: pointer; }
+    .axis-go:hover { border-color: currentColor; }
+    .lead { font-size: 1.05rem; max-width: 68ch; margin-bottom: 20px; }
+    .notes { margin-top: 14px; padding: 12px 16px; border: 1px dashed #d8cdbf; border-radius: 10px; font-size: 0.95rem; color: var(--muted); display: grid; gap: 4px; }
+    .notes strong { color: var(--text); font-weight: 600; }
+
+    /* News */
+    .news { list-style: none; margin: 0; padding: 0; }
+    .news li { display: grid; grid-template-columns: 78px 1fr; gap: 12px; padding: 6px 0; }
+    .news time { color: var(--muted); font-variant-numeric: tabular-nums; }
+    details summary { cursor: pointer; color: var(--accent); font-weight: 500; margin-top: 8px; list-style: none; }
+    details summary::-webkit-details-marker { display: none; }
+    details[open] summary .more-label::after { content: "Hide older news"; }
+    details:not([open]) summary .more-label::after { content: "Show older news"; }
+
+    /* Filters */
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+    .filters button { font: inherit; font-size: 0.92rem; padding: 5px 14px; border: 1px solid var(--line); border-radius: 999px; background: #ffffff; color: var(--text); cursor: pointer; white-space: nowrap; }
+    .filters button[aria-pressed="true"] { color: #ffffff; border-color: transparent; }
+    .filters button[data-filter="all"][aria-pressed="true"] { background: var(--text); }
+    .filters button.g[aria-pressed="true"] { background: var(--g); }
+    .filters button.s[aria-pressed="true"] { background: var(--s); }
+    .filters button.r[aria-pressed="true"] { background: var(--r); }
+    .filters button.o[aria-pressed="true"] { background: var(--o); }
+    .note { color: var(--muted); font-size: 0.92rem; }
+
+    /* Papers */
+    .paper { padding: 18px 0; border-bottom: 1px solid var(--line); }
+    .paper-list .paper:last-child { border-bottom: 0; }
+    .paper[hidden] { display: none; }
+    .side { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+    .venue, .tag { font-size: 0.82rem; font-weight: 600; padding: 2px 9px; border-radius: 4px; line-height: 1.5; }
+    .venue { background: #f3efe9; color: var(--text); }
+    .venue.review { background: transparent; color: var(--muted); border: 1px dashed #d8cdbf; }
+    .tag.g { background: var(--g-soft); color: var(--g); }
+    .tag.s { background: var(--s-soft); color: var(--s); }
+    .tag.r { background: var(--r-soft); color: var(--r); }
+    .tag.o { background: var(--o-soft); color: var(--o); }
+    .title { font-weight: 600; font-size: 1.08rem; line-height: 1.45; margin-bottom: 4px; }
+    .authors { color: var(--muted); font-size: 0.97rem; }
+    .authors .me { color: var(--text); font-weight: 600; }
+    .actions { display: flex; gap: 8px; margin-top: 8px; }
+    .actions a { font-size: 0.86rem; font-weight: 500; padding: 2px 10px; border: 1px solid var(--line); border-radius: 4px; }
+    .actions a:hover { border-color: var(--accent); text-decoration: none; }
+    .empty { color: var(--muted); padding: 16px 0; }
+
+    .compact { list-style: none; margin: 0; padding: 0; }
+    .compact li { padding: 10px 0; border-bottom: 1px solid var(--line); }
+    .compact li:last-child { border-bottom: 0; }
+    .compact .title { font-size: 1rem; font-weight: 500; }
+    .compact .authors { font-size: 0.93rem; }
+
+    footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; text-align: center; }
+
+    @media (max-width: 780px) { .axes { grid-template-columns: 1fr; } }
+    @media (max-width: 640px) {
+      .wrap { padding: 0 18px; }
+      .hero .wrap { padding-top: 32px; padding-bottom: 32px; }
+      .intro { grid-template-columns: 1fr; gap: 18px; }
+      .intro-photo { order: -1; }
+      .profile-photo { width: 150px; height: 150px; }
+      .name { font-size: 2.1rem; }
+      section { margin-top: 40px; }
+      .filters { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; margin-right: -18px; padding-right: 18px; }
+      .news li { grid-template-columns: 64px 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
 </head>
 
 <body>
-  <table class="content-table content-table--main">
-    <tbody>
-      <tr class="row-tight">
-        <td class="td-zero">
-          <table class="content-table">
-            <tbody>
-              <tr class="row-tight">
-                <td class="td-intro">
-                  <p class="name">
-                    Jieun Kim
-                  </p>
-                  <p>
-                    Hi! I'm a Ph.D. student at the <a href="https://sclab.yonsei.ac.kr/home">Soft Computing Lab</a> at
-                    <a href="https://graduate.yonsei.ac.kr/">Yonsei University</a>, advised by
-                    <a href="https://sclab.yonsei.ac.kr/people">Prof. Sung-Bae Cho</a>.
-                  </p>
-                  <p>
-                    My research focuses on <strong>vision, multimodal learning, and trustworthy AI (XAI)</strong>.
-                    I'm particularly interested in understanding how models perceive and reason about the visual world,
-                    and how we can ensure their outputs are interpretable and reliable.
-                  </p>
-                  
-                  <p>strong
-                    Currently, I am actively <strong>seeking research internship opportunities</strong> where I can contribute to and
-                    collaborate on cutting-edge problems in vision and multimodal AI.</p>
-                  <p>
-                   <span class="highlight-text"> I am always open to collaboration and internship opportunities, so please feel free to contact me anytime.😍 </span>
-                  </p>
+  <div class="hero"><div class="wrap">
+    <header class="intro">
+      <div>
+        <h1 class="name">Jieun Kim</h1>
+        <p class="affil">
+          Ph.D. student, <a href="https://sclab.yonsei.ac.kr/home">Soft Computing Lab</a>,
+          <a href="https://graduate.yonsei.ac.kr/">Yonsei University</a><br>
+          Advisor: <a href="https://sclab.yonsei.ac.kr/people">Prof. Sung-Bae Cho</a>
+        </p>
+        <p class="bio">
+          My research focuses on <strong>trustworthy multimodal AI</strong> across perception, reasoning, and agents.
+        </p>
+        <p class="internship"><span><strong>Seeking research internships for Summer 2027</strong></span></p>
+        <nav class="links" aria-label="Contact and profiles">
+          <a href="mailto:lilly9928@yonsei.ac.kr">Email</a>
+          <a href="data/JieunKim_CV_with_ED.pdf">CV</a>
+          <a href="https://www.linkedin.com/in/jieunnn/">LinkedIn</a>
+          <a href="https://github.com/lilly9928">GitHub</a>
+        </nav>
+      </div>
+      <div class="intro-photo">
+        <img class="profile-photo" src="images/profile4.jpg" alt="Jieun Kim">
+      </div>
+    </header>
+  </div></div>
 
-                  <p class="text-center">
-                    <a href="mailto:lilly9928@yonsei.ac.kr">Email</a> &nbsp;/&nbsp;
-                    <a href="data\My_CV.pdf">CV</a> &nbsp;/&nbsp;
-                    <a href="https://www.linkedin.com/in/jieunnn/">LinkedIn</a> &nbsp;/&nbsp;
-                    <a href="https://github.com/lilly9928">Github</a>
-                  </p>
-                </td>
-                <td class="td-intro-photo">
-                  <a><img class="profile-photo hoverZoomLink" alt="profile photo"
-                      src="images/profile2.png"></a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+  <main class="wrap">
 
-          <!-- News Title -->
-          <table class="content-table">
-            <tbody>
-              <tr>
-                <td class="td-section-title">
-                  <h2>News</h2> <!-- 여기에 아래쪽 마진 추가 -->
-                </td>
-              </tr>
-            </tbody>
-          </table>
+    <!-- ========== Research ========== -->
+    <section id="research">
+      <h2>Research</h2>
+      <div class="axes">
+        <div class="axis g">
+          <p class="axis-name">Perception</p>
+          <p class="axis-q">Perceiving accurately and faithfully</p>
+          <p class="axis-desc">Hallucination, visual understanding</p>
+          <button class="axis-go" type="button" data-go="perception">See papers</button>
+        </div>
+        <div class="axis s">
+          <p class="axis-name">Reasoning</p>
+          <p class="axis-q">Reasoning reliably and consistently</p>
+          <p class="axis-desc">Spatial reasoning, logical reasoning</p>
+          <button class="axis-go" type="button" data-go="reasoning">See papers</button>
+        </div>
+        <div class="axis r">
+          <p class="axis-name">Agents</p>
+          <p class="axis-q">Learning from failure, toward self-evolving agents</p>
+          <p class="axis-desc">Failure attribution, orchestration in LLM multi-agent systems</p>
+          <button class="axis-go" type="button" data-go="action">See papers</button>
+        </div>
+      </div>
+    </section>
 
-          <!-- News Content -->
-          <div class="news-scroll">
-            <table class="content-table">
-              <tbody>
+    <!-- ========== News ========== -->
+    <section id="news">
+      <h2>News</h2>
+      <ul class="news">
+        <li><time>2026.08</time><span>One paper on spatial reasoning accepted at <strong>EMNLP 2026 Findings</strong></span></li>
+        <li><time>2026.04</time><span>Two papers on logical and spatial reasoning accepted at <strong>ACL 2026 Main</strong></span></li>
+        <li><time>2026.03</time><span>One paper on video anomaly detection accepted at <strong>ICPR 2026</strong></span></li>
+        <li><time>2026.01</time><span>Three papers accepted at <strong>ICLR 2026</strong>, <strong>EACL 2026 Findings</strong>, and <strong>PAKDD 2026</strong></span></li>
+        <li><time>2025.06</time><span>One paper on LVLM hallucination accepted at <strong>ICCV 2025</strong></span></li>
+      </ul>
+    </section>
 
-                <tr>
-                  <td class="td-news-row">
-                    <span class="congrats-badge">🎉</span>
-                    2026.08 : One paper on Spatial Reasoning is accepted at <strong>EMNLP 2026 Findings</strong>!
-                  </td>
-                </tr>
+    <!-- ========== Publications ========== -->
+    <section id="publications">
+      <h2>Publications</h2>
 
-                <tr>
-                  <td class="td-news-row">
-                    <span class="congrats-badge">🎉</span>
-                    2026.04 : Two paper on Logical Reasoning and Spatial Reasoning is accepted at <strong>ACL 2026 Main</strong>!
-                  </td>
-                </tr>
+      <div class="filters" role="group" aria-label="Filter by topic">
+        <button type="button" data-filter="all" aria-pressed="true">All</button>
+        <button type="button" class="g" data-filter="perception" aria-pressed="false">Perception</button>
+        <button type="button" class="s" data-filter="reasoning" aria-pressed="false">Reasoning</button>
+        <button type="button" class="r" data-filter="action" aria-pressed="false">Agents</button>
+      </div>
+      <p class="note">* equal contribution</p>
 
-                <tr>
-                  <td class="td-news-row">
-                    <span class="congrats-badge">🎉</span>
-                    2026.03 : One paper on Video Anomaly Detection is accepted at <strong>ICPR 2026</strong>!
-                  </td>
-                </tr>
-
-
-                <tr>
-                  <td class="td-news-row">
-                    <span class="congrats-badge">🎉</span>
-                    2026.01 : One paper on Adaptive Beam Search is accepted at <strong>PAKDD 2026</strong>!
-                  </td>
-                </tr>
-
-
-                 <tr>
-                  <td class="td-news-row">
-                    <span class="congrats-badge">🎉</span>
-                    2026.01 : One paper on Hierarchical Semantic Segmentation is accepted at <strong>ICLR 2026</strong>!
-                  </td>
-                </tr>
-
-                <tr>
-                  <td class="td-news-row">
-                    <span class="congrats-badge">🎉</span>
-                    2026.01 : One paper on Visual–Linguistic Abductive Reasoning is accepted at <strong>EACL 2026 Findings</strong>!
-                  </td>
-                </tr>
-
-                <tr>
-                  <td class="td-news-row">
-                    <span class="congrats-badge">🎉</span>
-                    2025.06 : One paper on Mitigating Hallucination of Visual Language Model is accepted at <strong>ICCV
-                      2025</strong>!
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+      <h3>Under review</h3>
+      <div class="paper-list">
+        <article class="paper" data-tags="perception">
+          <div class="side"><span class="venue review">Under review</span><span class="tag g">Perception</span></div>
+          <div>
+            <p class="title">Dynamic Steering of Layer-wise Uncertainty to Mitigate Hallucination in LVLMs</p>
+            <p class="authors"><span class="me">Jieun Kim</span>, Yujin Jeong, Yoonji Kim, Sung-Bae Cho</p>
           </div>
+        </article>
+        <article class="paper" data-tags="action">
+          <div class="side"><span class="venue review">Under review</span><span class="tag r">Agents</span></div>
+          <div>
+            <p class="title">BDI Architecture for Efficient Orchestration of LLM-based Multi-Agent Systems</p>
+            <p class="authors"><span class="me">Jieun Kim</span>, Seoha Lim, Yeonhui Kim, Sung-Bae Cho</p>
+          </div>
+        </article>
+        <article class="paper" data-tags="action">
+          <div class="side"><span class="venue review">Under review</span><span class="tag r">Agents</span></div>
+          <div>
+            <p class="title">Failure Attribution with Stepwise Uncertainty in Multi-Agent Systems</p>
+            <p class="authors"><span class="me">Jieun Kim</span>, Taehyun Park, Sung-Bae Cho</p>
+          </div>
+        </article>
+      </div>
 
+      <h3>Published</h3>
+      <div class="paper-list">
+        <article class="paper" data-tags="reasoning">
+          <div class="side"><span class="venue">EMNLP 2026 Findings</span><span class="tag s">Reasoning</span></div>
+          <div>
+            <p class="title">Spatial Reasoning in Large Vision-Language Models via Egocentric-to-Allocentric Transformation</p>
+            <p class="authors">Yoonji Kim*, <span class="me">Jieun Kim*</span>, Sung-Bae Cho</p>
+          </div>
+        </article>
+        <article class="paper" data-tags="reasoning">
+          <div class="side"><span class="venue">ACL 2026 Main</span><span class="tag s">Reasoning</span></div>
+          <div>
+            <p class="title">Injecting Context via Situation Working Memory for Logical Reasoning with LLMs</p>
+            <p class="authors"><span class="me">Jieun Kim</span>, Seoha Lim, YoungHae Choi, Sung-Bae Cho</p>
+            <div class="actions"><a href="https://aclanthology.org/2026.acl-long.1499.pdf">Paper</a></div>
+          </div>
+        </article>
+        <article class="paper" data-tags="reasoning">
+          <div class="side"><span class="venue">ACL 2026 Main</span><span class="tag s">Reasoning</span></div>
+          <div>
+            <p class="title">Diagnosing Spatial Consistency across Perspectives and Viewpoints in Large Vision-Language Models</p>
+            <p class="authors">Yoonji Kim, <span class="me">Jieun Kim</span>, Yujin Jeong, Sung-Bae Cho</p>
+            <div class="actions"><a href="https://aclanthology.org/2026.acl-long.1514.pdf">Paper</a></div>
+          </div>
+        </article>
+        <article class="paper" data-tags="perception">
+          <div class="side"><span class="venue">ICPR 2026</span><span class="tag g">Perception</span></div>
+          <div>
+            <p class="title">Hyperbolic Spatio-temporal Representation Learning for Unsupervised Video Anomaly Detection</p>
+            <p class="authors">Jinmyeong Kim, <span class="me">Jieun Kim</span>, Sung-Bae Cho</p>
+            <div class="actions"><a href="https://dl.acm.org/doi/10.1007/978-3-032-31933-3_32">Paper</a></div>
+          </div>
+        </article>
+        <article class="paper" data-tags="reasoning">
+          <div class="side"><span class="venue">PAKDD 2026</span><span class="tag s">Reasoning</span></div>
+          <div>
+            <p class="title">Adaptive Beam Search with Shannon Entropy for Data-centric Reasoning in LLMs</p>
+            <p class="authors">Yoonji Kim*, Yujin Jeong*, <span class="me">Jieun Kim</span>, Sung-Bae Cho</p>
+            <div class="actions"><a href="https://dl.acm.org/doi/abs/10.1007/978-981-92-1468-6_43">Paper</a></div>
+          </div>
+        </article>
+        <article class="paper" data-tags="perception">
+          <div class="side"><span class="venue">ICLR 2026</span><span class="tag g">Perception</span></div>
+          <div>
+            <p class="title">Hierarchical Prototype Learning for Semantic Segmentation</p>
+            <p class="authors">Seoha Lim*, Jinmyeong Kim*, <span class="me">Jieun Kim</span>, Sung-Bae Cho</p>
+            <div class="actions">
+              <a href="https://openreview.net/pdf?id=wHMuQ9HgUo">Paper</a>
+              <a href="https://github.com/seoha815/HiPoSeg/tree/main?tab=readme-ov-file">Code</a>
+            </div>
+          </div>
+        </article>
+        <article class="paper" data-tags="reasoning">
+          <div class="side"><span class="venue">EACL 2026 Findings</span><span class="tag s">Reasoning</span></div>
+          <div>
+            <p class="title">Visual–Linguistic Abductive Reasoning with LLMs for Knowledge-based Visual Question Answering</p>
+            <p class="authors"><span class="me">Jieun Kim</span>, Yujun Jung, Sung-Bae Cho</p>
+            <div class="actions"><a href="https://aclanthology.org/2026.findings-eacl.343.pdf">Paper</a></div>
+          </div>
+        </article>
+        <article class="paper" data-tags="perception">
+          <div class="side"><span class="venue">ICCV 2025</span><span class="tag g">Perception</span></div>
+          <div>
+            <p class="title">Fuzzy Contrastive Decoding to Alleviate Object Hallucination in Large Vision-Language Models</p>
+            <p class="authors"><span class="me">Jieun Kim</span>, Jinmyeong Kim, Yoonji Kim, Sung-Bae Cho</p>
+            <div class="actions">
+              <a href="https://openaccess.thecvf.com/content/ICCV2025/papers/Kim_Fuzzy_Contrastive_Decoding_to_Alleviate_Object_Hallucination_in_Large_Vision-Language_ICCV_2025_paper.pdf">Paper</a>
+              <a href="https://github.com/lilly9928/FuzzyCD">Code</a>
+            </div>
+          </div>
+        </article>
+        <article class="paper" data-tags="perception">
+          <div class="side"><span class="venue">ACM Computing Surveys 2025</span><span class="tag g">Perception</span></div>
+          <div>
+            <p class="title">Visual Question Answering: A Survey of Methods, Datasets, Evaluation, and Challenges</p>
+            <p class="authors">Byeong Su Kim, <span class="me">Jieun Kim</span>, Deokwoo Lee, Beakcheol Jang</p>
+            <div class="actions"><a href="https://dl.acm.org/doi/10.1145/3728635">Paper</a></div>
+          </div>
+        </article>
+      </div>
+      <p class="empty" hidden>No papers under this topic yet.</p>
 
-        
-          <table class="content-table">
-            <tbody>
-              <tr>
-                <td class="td-section-title">
-                  <h2>UnderReview</h2>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <table class="content-table">
-            <tbody>
+      <h3>Earlier work</h3>
+      <ul class="compact">
+        <li>
+          <p class="title">FTT: Fourier Transform based Transformer for Brain CT Report Generation</p>
+          <p class="authors"><span class="me">Jieun Kim</span>, Byeong Su Kim, Insung Choi, Zepa Yang, Beakcheol Jang. <em>ICAIIC 2024</em></p>
+        </li>
+        <li>
+          <p class="title">Facial Expression Recognition using Visual Transformer with Histogram of Oriented Gradients</p>
+          <p class="authors"><span class="me">Jieun Kim</span>, Ju O Kim, Seungwan Je, Deokwoo Lee. <em>Electronic Imaging 2023</em> (oral)</p>
+        </li>
+        <li>
+          <p class="title">Facial Expression Recognition Robust to Occlusion using Spatial Transformer Network with Triplet Loss Function</p>
+          <p class="authors"><span class="me">Jieun Kim</span>, Eung-Joo Lee, Deokwoo Lee. <em>SPIE 12101, Pattern Recognition and Tracking 2022</em></p>
+        </li>
+      </ul>
+    </section>
 
-        
+    <footer>
+      &copy; 2026 Jieun Kim. Last updated September 2026.
+    </footer>
+  </main>
 
-                <!--PAPER START-->
-              <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td class="td-paper-thumb">
-                  <img src="images/fuzzysteering.png" class="paper-thumb-img" alt="">
-                </td>
-                <td class="td-paper-body">
-                  <span class="papertitle">Fuzzy Steering of Latent Space for Mitigating Hallucinations in Large Vision-Language Models</span>
-                  </a>
-                  <br>
-                  <strong>Jieun Kim</strong>, Yujin Jeong, Yoonji Kim, Sung-Bae Cho
-                  <br>
-                  <em>Under Review</em>, 2026
-                  <br>
-                  <!-- <a href="">page</a>
-                  /
-                  <a href="">paper</a> -->
-                </td>
-              </tr>
-              <!--PAPER END-->
+  <script>
+    (function () {
+      var buttons = document.querySelectorAll(".filters button");
+      var papers = document.querySelectorAll(".paper-list .paper");
+      var empty = document.querySelector(".empty");
 
+      function applyFilter(f) {
+        buttons.forEach(function (b) {
+          b.setAttribute("aria-pressed", b.dataset.filter === f ? "true" : "false");
+        });
+        var shown = 0;
+        papers.forEach(function (p) {
+          var match = f === "all" || p.dataset.tags.split(" ").indexOf(f) !== -1;
+          p.hidden = !match;
+          if (match) shown++;
+        });
+        empty.hidden = shown > 0;
+      }
 
-
-            </tbody>
-          </table>
-
-          <table class="content-table">
-            <tbody>
-              <tr>
-                <td class="td-section-title">
-                  <h2>Research</h2>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <table class="content-table">
-            <tbody>
-
-               <!--PAPER START-->
-                 <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                  <td class="td-paper-thumb">
-                    <img src="images/SCORE.jpg" class="paper-thumb-img" alt="">
-                  </td>
-                  <td class="td-paper-body">
-                    <span class="papertitle">Spatial Reasoning in Large Vision-Language Models via Egocentric-to-Allocentric Transformation </span>
-                    </a>
-                    <br>
-                    Yoonji Kim*, <strong>Jieun Kim*</strong>, Sung-Bae Cho
-                    <br>
-                    <em>EMNLP Findings</em>, 2026
-                    <br>
-                    <!-- <a href="">page</a>
-                    /
-                    <a href="">paper</a> -->
-                  </td>
-                </tr>
-                <!--PAPER END-->
-
-
-
-                 <!--PAPER START-->
-                 <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                  <td class="td-paper-thumb">
-                    <img src="images/situW.png" class="paper-thumb-img" alt="">
-                  </td>
-                  <td class="td-paper-body">
-                    <span class="papertitle">Injecting Context via Situation Working Memory for Logical Reasoning with LLMs</span>
-                    </a>
-                    <br>
-                    <strong>Jieun Kim</strong>, Seoha Lim, YoungHae Choi, Sung-Bae Cho
-                    <br>
-                    <em>ACL Main</em>, 2026
-                    <br>
-                    <a href="https://aclanthology.org/2026.acl-long.1499.pdf">paper</a>
-                    <!-- <a href="">page</a>
-                    /
-                    <a href="">paper</a> -->
-                  </td>
-                </tr>
-                <!--PAPER END-->
-
-               <!--PAPER START-->
-               <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td class="td-paper-thumb">
-                  <img src="images/scope.png" class="paper-thumb-img" alt="">
-                </td>
-                <td class="td-paper-body">
-                  <span class="papertitle">Diagnosing Spatial Consistency across Perspectives and Viewpoints in Large Vision-Language Models</span>
-                  </a>
-                  <br>
-                  Yoonji Kim, <strong>Jieun Kim</strong>, Yujin Jeong, Sung-Bae Cho
-                  <br>
-                  <em>ACL Main</em>, 2026
-                  <br>
-                   <a href="https://aclanthology.org/2026.acl-long.1514.pdf">paper</a>
-                  <!-- <a href="">page</a>
-                  /
-                  <a href="">paper</a> -->
-                </td>
-              </tr>
-              <!--PAPER END-->
-
-               
-              <!--PAPER START-->
-              <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td class="td-paper-thumb">
-                  <img src="images/vad.png" class="paper-thumb-img" alt="">
-                </td>
-                <td class="td-paper-body">
-                  <span class="papertitle">Hyperbolic Spatio-temporal Representation Learning for Unsupervised Video Anomaly Detection</span>
-                  </a>
-                  <br>
-                  Jinmyeong Kim, <strong>Jieun Kim</strong>, Sung-Bae Cho
-                  <br>
-                  <em>ICPR</em>, 2026
-                  <br>
-                  <a href="https://dl.acm.org/doi/10.1007/978-3-032-31933-3_32">paper</a>
-                  <!-- <a href="">page</a>
-                  /
-                  <a href="">paper</a> -->
-                </td>
-              </tr>
-              <!--PAPER END-->
-
-              <!--PAPER START-->
-              <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td class="td-paper-thumb">
-                  <img src="images/adaptive_beam.png" class="paper-thumb-img" alt="">
-                </td>
-                <td class="td-paper-body">
-                  <span class="papertitle">Adaptive Beam Search with Shannon Entropy for Data-centric Reasoning in LLMs</span>
-                  </a>
-                  <br>
-                 Yoonji Kim*, Yujin Jeong*, <strong>Jieun Kim</strong>, Sung-Bae Cho
-                  <br>
-                  <em>PAKDD</em>, 2026
-                  <br>
-                    <a href="https://dl.acm.org/doi/abs/10.1007/978-981-92-1468-6_43">paper</a>
-                  <!-- <a href="">page</a>
-                  /
-                  <a href="">paper</a> -->
-                </td>
-              </tr>
-              <!--PAPER END-->
-              
-                  <!--PAPER START-->
-              <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td class="td-paper-thumb">
-                  <img src="images/segmentation.png" class="paper-thumb-img" alt="">
-                </td>
-                <td class="td-paper-body">
-                  <span class="papertitle">Hierarchical Prototype Learning for Semantic Segmentation</span>
-                  </a>
-                  <br>
-                  Seoha Lim*, Jinmyeong Kim*, <strong>Jieun Kim</strong>, Sung-Bae Cho
-                  <br>
-                  <em>ICLR</em>, 2026
-                  <br>
-                  <a href="https://github.com/seoha815/HiPoSeg/tree/main?tab=readme-ov-file">page</a>
-                  /
-                  <a href="https://openreview.net/pdf?id=wHMuQ9HgUo">paper</a>
-                </td>
-              </tr>
-              <!--PAPER END-->
-
-
-              <!--PAPER START-->
-              <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td class="td-paper-thumb">
-                  <img src="images/locott.png" class="paper-thumb-img" alt="">
-                </td>
-                <td class="td-paper-body">
-                  <span class="papertitle">Visual–Linguistic Abductive Reasoning with LLMs for Knowledge-based Visual Question Answering</span>
-                  </a>
-                  <br>
-                  <strong>Jieun Kim</strong>, Yujun Jung, Sung-Bae Cho
-                  <br>
-                  <em>EACL</em>, 2026
-                  <br>
-                  <!-- <a href="">page</a>-->
-                  <a href="https://aclanthology.org/2026.findings-eacl.343.pdf">paper</a> 
-                </td>
-              </tr>
-              <!--PAPER END-->
-
-
-              <!--PAPER START-->
-              <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td class="td-paper-thumb">
-                  <img src="images/fuzzycd_img.png" class="paper-thumb-img" alt="">
-                </td>
-                <td class="td-paper-body">
-                  <span class="papertitle">Fuzzy Contrastive Decoding to Alleviate Object Hallucination in Large
-                    Vision-Language Models</span>
-                  </a>
-                  <br>
-                   <strong>Jieun Kim</strong>, Jinmyeong Kim, Yoonji Kim, Sung-Bae Cho
-                  <!-- <strong>Jieun Kim</strong>, <span class="tooltip"><a href="https://tobe-honest.github.io/">Jinmyeong Kim</a></span> , Yoonji Kim, Sung-Bae Cho -->
-                  <br>
-                  <em>ICCV</em>, 2025
-                  <br>
-                  <a href="https://github.com/lilly9928/FuzzyCD">page</a>
-                  /
-                  <a href="https://openaccess.thecvf.com/content/ICCV2025/papers/Kim_Fuzzy_Contrastive_Decoding_to_Alleviate_Object_Hallucination_in_Large_Vision-Language_ICCV_2025_paper.pdf">paper</a>
-                </td>
-              </tr>
-              <!--PAPER END-->
-              <!--PAPER START-->
-              <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td class="td-paper-thumb">
-                  <img src="images/survey.png" class="paper-thumb-img" alt="">
-
-                </td>
-                <td class="td-paper-body">
-                  <span class="papertitle">Visual Question Answering: A Survey of Methods, Datasets, Evaluation, and
-                    Challenges</span>
-                  </a>
-                  <br>
-                  Byeong Su Kim, <strong>Jieun Kim</strong>, Deokwoo Lee, Beakcheol Jang
-                  <br>
-                  <em>ACM Computing Surveys</em>, 2025 (IF 23.8)
-                  <br>
-                  <a href="https://dl.acm.org/doi/10.1145/3728635">paper</a>
-                </td>
-              </tr>
-              <!--PAPER END-->
-
-
-              <!--PAPER START-->
-              <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td class="td-paper-thumb">
-                  <img src="images/noImage.jpg" class="paper-thumb-img" alt="">
-
-                </td>
-                <td class="td-paper-body">
-                  <span class="papertitle">FTT: Fourier Transform based Transformer for Brain CT Report
-                    Generation</span>
-                  </a>
-                  <br>
-                  <strong>Jieun Kim</strong>, Byeong Su Kim, Insung Choi, Zepa Yang and Beakcheol Jang
-                  <br>
-                  <em>ICAIIC</em>, 2024
-                  <br>
-                </td>
-              </tr>
-              <!--PAPER END-->
-              <!--PAPER START-->
-              <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td class="td-paper-thumb">
-                  <img src="images/noImage.jpg" class="paper-thumb-img" alt="">
-
-                </td>
-                <td class="td-paper-body">
-                  <span class="papertitle">Facial Expression Recognition using Visual Transformer with Histogram of
-                    Oriented Gradients</span>
-                  </a>
-                  <br>
-                  <strong>Jieun Kim</strong>, Ju O Kim, Seungwan Je, Deokwoo Lee
-                  <br>
-                  <em>Electronic Imaging</em>, Vol. 7, oral 19 Jan 2023
-                  <br>
-                </td>
-              </tr>
-              <!--PAPER END-->
-              <!--PAPER START-->
-              <tr onmouseout="bolt3d_stop()" onmouseover="bolt3d_stop()" bgcolor="">
-                <td class="td-paper-thumb">
-                  <img src="images/noImage.jpg" class="paper-thumb-img" alt="">
-
-                </td>
-                <td class="td-paper-body">
-                  <span class="papertitle">Facial Expression Recognition Robust to Occlusion using Spatial Transformer
-                    Network with Triplet Loss Function</span>
-                  </a>
-                  <br>
-                  <strong>Jieun Kim</strong>, Eung-Joo Lee, Deokwoo Lee
-                  <br>
-                  <em>SPIE 12101, Pattern Recognition and Tracking </em>, 2022
-                  <br>
-                </td>
-              </tr>
-              <!--PAPER END-->
-
-
-            </tbody>
-          </table>
-
-
-          <table class="content-table">
-            <tbody>
-              <tr>
-                <td class="td-zero">
-                  <p class="footer-note">
-                    Design and source code from <a href="https://jonbarron.info">Jon Barron</a>
-                  </p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </td>
-      </tr>
-  </table>
+      buttons.forEach(function (btn) {
+        btn.addEventListener("click", function () { applyFilter(btn.dataset.filter); });
+      });
+      document.querySelectorAll(".axis-go").forEach(function (t) {
+        t.addEventListener("click", function () {
+          applyFilter(t.dataset.go);
+          document.getElementById("publications").scrollIntoView();
+        });
+      });
+    })();
+  </script>
 </body>
-
 </html>
