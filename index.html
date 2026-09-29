@@ -115,6 +115,10 @@
     .compact .title { font-size: 1rem; font-weight: 500; }
     .compact .authors { font-size: 0.93rem; }
 
+    /* Beyond research */
+    .beyond { font-size: 1.05rem; max-width: 68ch; }
+    .beyond a { font-weight: 500; white-space: nowrap; }
+
     footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; text-align: center; }
 
     @media (max-width: 780px) { .axes { grid-template-columns: 1fr; } }
@@ -127,8 +131,7 @@
       .name { font-size: 2.1rem; }
       section { margin-top: 40px; }
       .filters { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; margin-right: -18px; padding-right: 18px; }
-      .news li { grid-template-columns: 64px 1fr; }
-    }
+      .news li { grid-template-columns: 64px 1fr; }    }
     @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
   </style>
 </head>
@@ -243,6 +246,7 @@
           <div>
             <p class="title">Spatial Reasoning in Large Vision-Language Models via Egocentric-to-Allocentric Transformation</p>
             <p class="authors">Yoonji Kim*, <span class="me">Jieun Kim*</span>, Sung-Bae Cho</p>
+            <div class="actions"><a href="projects/score.html">Page</a></div>
           </div>
         </article>
         <article class="paper" data-tags="reasoning">
@@ -250,7 +254,7 @@
           <div>
             <p class="title">Injecting Context via Situation Working Memory for Logical Reasoning with LLMs</p>
             <p class="authors"><span class="me">Jieun Kim</span>, Seoha Lim, YoungHae Choi, Sung-Bae Cho</p>
-            <div class="actions"><a href="https://aclanthology.org/2026.acl-long.1499.pdf">Paper</a></div>
+            <div class="actions"><a href="projects/situw.html">Page</a><a href="https://aclanthology.org/2026.acl-long.1499.pdf">Paper</a><a href="https://github.com/lilly9928/SituW">Code</a></div>
           </div>
         </article>
         <article class="paper" data-tags="reasoning">
@@ -293,7 +297,7 @@
           <div>
             <p class="title">Visual–Linguistic Abductive Reasoning with LLMs for Knowledge-based Visual Question Answering</p>
             <p class="authors"><span class="me">Jieun Kim</span>, Yujun Jung, Sung-Bae Cho</p>
-            <div class="actions"><a href="https://aclanthology.org/2026.findings-eacl.343.pdf">Paper</a></div>
+            <div class="actions"><a href="projects/vila.html">Page</a><a href="https://aclanthology.org/2026.findings-eacl.343.pdf">Paper</a></div>
           </div>
         </article>
         <article class="paper" data-tags="perception">
@@ -334,6 +338,16 @@
           <p class="authors"><span class="me">Jieun Kim</span>, Eung-Joo Lee, Deokwoo Lee. <em>SPIE 12101, Pattern Recognition and Tracking 2022</em></p>
         </li>
       </ul>
+    </section>
+
+    <!-- ========== Beyond research ========== -->
+    <section id="beyond">
+      <h2>Beyond research</h2>
+      <p class="beyond">
+        Outside the lab, I love <a href="dogs.html">dogs</a>,
+        <a href="https://soundcloud.com/lill_eun" target="_blank" rel="noopener">DJing</a>,
+        and <a href="movies.html">watching movies</a>.
+      </p>
     </section>
 
     <footer>

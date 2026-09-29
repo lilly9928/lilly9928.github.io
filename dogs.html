@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Jieun Kim">
+  <meta name="description" content="Jieun Kim beyond research: dogs.">
+  <title>Dogs | Jieun Kim</title>
+  <link rel="shortcut icon" href="images/hamster-face.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fffdfa;
+      --text: #2b2622;
+      --muted: #7b7169;
+      --line: #ede6dc;
+      --accent: #8c5a3c;
+      --g: #7a5d3c;  --g-soft: #f4ecdf;
+      --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+      --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+    }
+    html { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 17px; line-height: 1.65; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    p { margin: 0; }
+
+    .wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 40px; }
+    .back { display: inline-block; font-weight: 500; margin-bottom: 28px; }
+    h1 { font-family: var(--serif); font-size: 2.4rem; font-weight: 700; line-height: 1.1; margin: 0 0 12px; letter-spacing: -0.01em; color: var(--g); margin-bottom: 28px; }
+
+    .photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .photos img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; display: block; border: 4px solid #ffffff; border-radius: 12px; background: var(--g-soft); box-shadow: 0 4px 18px rgba(90,66,44,.14); }
+
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+    footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; text-align: center; }
+
+    @media (max-width: 640px) {
+      .wrap { padding: 32px 18px 32px; }
+      h1 { font-size: 2rem; }
+      .photos { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    }  </style>
+</head>
+
+<body>
+  <main class="wrap">
+    <a class="back" href="index.html">&larr; Back to home</a>
+    <h1><span aria-hidden="true">🐾</span><span class="visually-hidden">Dogs</span></h1>
+
+    <!-- To add a photo: put a resized copy in images/dogs/ and add an <img> line. -->
+    <div class="photos">
+      <img src="images/dogs/dog07.jpg" alt="White dog smiling on a sunny walk" loading="lazy">
+      <img src="images/dogs/dog01.jpg" alt="Black puppy with a pink harness" loading="lazy">
+      <img src="images/dogs/dog03.jpg" alt="Giving belly rubs to a fluffy white dog" loading="lazy">
+      <img src="images/dogs/dog02.jpg" alt="Dog photo" loading="lazy">
+      <img src="images/dogs/dog04.jpg" alt="Dog photo" loading="lazy">
+      <img src="images/dogs/dog05.jpg" alt="Dog photo" loading="lazy">
+      <img src="images/dogs/dog06.jpg" alt="Dog photo" loading="lazy">
+    </div>
+
+    <footer>
+      &copy; 2026 Jieun Kim.
+    </footer>
+  </main>
+</body>
+</html>

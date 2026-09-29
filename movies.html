@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Jieun Kim">
+  <meta name="description" content="Jieun Kim beyond research: favorite movies and TV shows.">
+  <title>Movies &amp; TV | Jieun Kim</title>
+  <link rel="shortcut icon" href="images/hamster-face.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fffdfa;
+      --text: #2b2622;
+      --muted: #7b7169;
+      --line: #ede6dc;
+      --accent: #8c5a3c;
+      --r: #8a5648;  --r-soft: #f5e8e3;
+      --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+      --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+    }
+    html { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 17px; line-height: 1.65; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    p { margin: 0; }
+
+    .wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 40px; }
+    .back { display: inline-block; font-weight: 500; margin-bottom: 28px; }
+    h1 { font-family: var(--serif); font-size: 2.4rem; font-weight: 700; line-height: 1.1; margin: 0 0 12px; letter-spacing: -0.01em; color: var(--r); }
+    .lead { font-size: 1.1rem; max-width: 60ch; margin-bottom: 8px; }
+
+    h2 { font-family: var(--serif); font-size: 1.45rem; font-weight: 600; margin: 36px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+    .list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px 16px; }
+    .list img { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; display: block; border-radius: 8px; background: var(--r-soft); box-shadow: 0 4px 14px rgba(90,66,44,.16); margin-bottom: 8px; }
+    .list .title { display: block; font-weight: 600; font-size: 0.95rem; line-height: 1.35; }
+    .list .year { display: block; color: var(--muted); font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+    .credit { margin-top: 6px; }
+
+    footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; text-align: center; }
+
+    @media (max-width: 640px) {
+      .wrap { padding: 32px 18px 32px; }
+      h1 { font-size: 2rem; }
+      .list { grid-template-columns: repeat(2, 1fr); gap: 18px 12px; }
+    }
+    @media (min-width: 641px) and (max-width: 780px) { .list { grid-template-columns: repeat(3, 1fr); } }
+  </style>
+</head>
+
+<body>
+  <main class="wrap">
+    <a class="back" href="index.html">&larr; Back to home</a>
+    <h1>Movies &amp; TV</h1>
+    <p class="lead">I love watching movies. Here are some of my favorites.</p>
+
+    <!-- Add a title: save its poster (2:3) in images/movies/ and copy an <li> block. -->
+    <h2>Movies</h2>
+    <ul class="list">
+      <li><img src="images/movies/spiderman-bnd.jpg" alt="" loading="lazy"><span class="title">Spider-Man: Brand New Day</span><span class="year">2026</span></li>
+      <li><img src="images/movies/project-hail-mary.jpg" alt="" loading="lazy"><span class="title">Project Hail Mary</span><span class="year">2026</span></li>
+      <li><img src="images/movies/soul.jpg" alt="" loading="lazy"><span class="title">Soul</span><span class="year">2020</span></li>
+      <li><img src="images/movies/crazy-rich-asians.jpg" alt="" loading="lazy"><span class="title">Crazy Rich Asians</span><span class="year">2018</span></li>
+      <li><img src="images/movies/la-la-land.jpg" alt="" loading="lazy"><span class="title">La La Land</span><span class="year">2016</span></li>
+      <li><img src="images/movies/moana.jpg" alt="" loading="lazy"><span class="title">Moana</span><span class="year">2016</span></li>
+      <li><img src="images/movies/inside-out.jpg" alt="" loading="lazy"><span class="title">Inside Out</span><span class="year">2015</span></li>
+      <li><img src="images/movies/big-hero-6.jpg" alt="" loading="lazy"><span class="title">Big Hero 6</span><span class="year">2014</span></li>
+    </ul>
+
+    <h2>TV shows</h2>
+    <ul class="list">
+      <li><img src="images/movies/friends.jpg" alt="" loading="lazy"><span class="title">Friends</span><span class="year">1994&ndash;2004</span></li>
+      <li><img src="images/movies/himym.jpg" alt="" loading="lazy"><span class="title">How I Met Your Mother</span><span class="year">2005&ndash;2014</span></li>
+      <li><img src="images/movies/big-bang-theory.jpg" alt="" loading="lazy"><span class="title">The Big Bang Theory</span><span class="year">2007&ndash;2019</span></li>
+      <li><img src="images/movies/modern-family.jpg" alt="" loading="lazy"><span class="title">Modern Family</span><span class="year">2009&ndash;2020</span></li>
+      <li><img src="images/movies/young-sheldon.jpg" alt="" loading="lazy"><span class="title">Young Sheldon</span><span class="year">2017&ndash;2024</span></li>
+    </ul>
+
+    <footer>
+      &copy; 2026 Jieun Kim.
+      <p class="credit">Posters via <a href="https://www.themoviedb.org/">TMDB</a>.</p>
+    </footer>
+  </main>
+</body>
+</html>

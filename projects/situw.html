@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SituW: Injecting Context via Situation Working Memory for Logical Reasoning with LLMs</title>
+<meta name="description" content="SituW builds a situation working memory along time, space, protagonist, causality and intention, and conditions LLM logical reasoning on it. ACL 2026.">
+<meta property="og:title" content="SituW: Situation Working Memory for Logical Reasoning (ACL 2026)">
+<meta property="og:description" content="Track what is true now: an explicit, sentence-by-sentence situation memory for LLM reasoning.">
+<meta property="og:image" content="images/SituW_overview.png">
+<meta name="theme-color" content="#fbfcf8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fbfcf8; --ink:#1d221d; --muted:#626a62; --faint:#8a918a; --rule:#e2e6dc; --card:#ffffff;
+  --teal:#3b7c8a; --teal-soft:#e3eff2; --mauve:#9c3f6e; --mauve-soft:#f6e8ef; --sand:#faf3d9; --gold:#b98a0c;
+  --good:#2e9e5b;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration-color:var(--rule);text-underline-offset:3px}
+a:hover{text-decoration-color:var(--teal)}
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:4px}
+img{max-width:100%;height:auto;display:block}
+
+.col,.wide{max-width:1040px;margin:0 auto;padding:0 1.5rem}
+
+/* Header */
+header{padding:4.5rem 0 2rem}
+.venue{display:inline-block;font-family:var(--mono);font-size:.8rem;color:var(--teal);border:1px solid var(--teal);border-radius:999px;padding:.15rem .7rem;margin-bottom:1.6rem}
+.mark{font-family:var(--mono);font-size:1rem;color:var(--muted);margin:0 0 .6rem}
+.mark b{color:var(--ink);font-weight:500}
+h1{font-size:clamp(1.9rem,4.6vw,3.1rem);line-height:1.15;letter-spacing:-.02em;font-weight:700;margin:0 0 1.4rem}
+.authors{margin:0 0 .2rem;font-size:1.02rem}
+.authors .sep{color:var(--faint);margin:0 .35rem}
+.affil{color:var(--muted);font-size:.95rem;margin:0 0 1.6rem}
+.links{display:flex;flex-wrap:wrap;gap:.5rem}
+.links a{font-family:var(--mono);font-size:.85rem;text-decoration:none;padding:.4rem .9rem;border:1px solid var(--ink);border-radius:6px;background:var(--card)}
+.links a:hover{background:var(--ink);color:var(--bg)}
+
+/* Figures */
+figure{margin:0}
+.plate{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:clamp(.6rem,2vw,1.5rem)}
+.plate img{margin:0 auto}
+figcaption{font-style:italic;color:var(--muted);font-size:.93rem;margin-top:.8rem}
+.hero-fig{margin:1.5rem auto 0}
+
+/* Sections */
+section{padding:4rem 0 0}
+.label{font-family:var(--mono);font-size:.8rem;color:var(--teal);margin:0 0 .4rem}
+h2{font-size:clamp(1.45rem,3vw,1.9rem);line-height:1.25;letter-spacing:-.015em;font-weight:700;margin:0 0 1rem}
+h3{font-size:1.1rem;font-weight:600;margin:2.5rem 0 .8rem}
+p{margin:0 0 1rem}
+.lead{font-size:1.08rem}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:2.5rem;align-items:center}
+.split .text p:last-child{margin-bottom:0}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.5rem;align-items:start}
+
+.box{background:var(--card);border:1px solid var(--rule);border-left:3px solid var(--teal);border-radius:8px;padding:.8rem 1rem;font-size:.92rem}
+.box ol{margin:.3rem 0 0;padding-left:1.4rem}
+.box .k{font:500 .78rem var(--mono);color:var(--teal)}
+
+/* Situation memory animation */
+.sm{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:1.2rem 1.3rem;margin:1.2rem 0 0}
+.sm-ctx{background:var(--sand);border-radius:8px;padding:.8rem 1rem;font-size:.95rem;line-height:1.6}
+.sm-ctx .k{display:block;font:500 .75rem var(--mono);color:var(--muted);margin-bottom:.2rem}
+.sm-ctx span{border-radius:3px;transition:background-color .4s,box-shadow .4s}
+.sm-ctx .s1{background:rgba(59,124,138,.14)}
+.sm.cur2 .sm-ctx .s2{background:rgba(156,63,110,.16);box-shadow:0 0 0 2px rgba(156,63,110,.25)}
+.sm-eq{font:400 .85rem var(--mono);color:var(--muted);background:var(--bg);border-radius:6px;padding:.45rem .7rem;margin:.8rem 0 0;overflow-x:auto;white-space:nowrap}
+.sm-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:1rem;margin:1rem 0 0;align-items:start}
+.sm-proc{display:grid;gap:.6rem}
+.sm-step{border:1.5px solid var(--mauve);background:var(--mauve-soft);border-radius:8px;padding:.6rem .8rem;font-size:.9rem}
+.sm-step h4{margin:0 0 .3rem;font-size:.9rem;font-weight:600}
+.sm-step h4 i{font-style:normal;font:500 .75rem var(--mono);color:var(--mauve);margin-right:.35rem}
+.sm-step dl{display:grid;grid-template-columns:auto 1fr;gap:.1rem .6rem;margin:0}
+.sm-step dt{font-weight:600}
+.sm-step dd{margin:0;font-style:italic}
+.sm-read{font:500 .8rem var(--mono);color:var(--mauve)}
+.sm-mem{border:1.5px solid var(--teal);border-radius:8px;overflow:hidden}
+.sm-mem h4{margin:0;padding:.5rem .8rem;font-size:.92rem;font-weight:600;background:var(--teal-soft)}
+.sm-mem h4 b{color:var(--teal)}
+.sm-mem table{font-size:.86rem}
+.sm-mem th{width:30%;background:var(--teal-soft);color:var(--ink);font-weight:500;text-align:left;font-size:.84rem;white-space:normal}
+.sm-mem td{text-align:left;white-space:normal;font-style:italic}
+.sm-mem .grp{display:block;font:500 .7rem var(--mono);color:var(--teal);font-style:normal}
+.sm-new{border-radius:3px;padding:0 .15rem;transition:background-color .6s}
+.sm.on4 .sm-new{background:rgba(185,138,12,.22);font-weight:500}
+.sm-mem .add{display:none}
+.sm.on4 .sm-mem .add{display:inline}
+.sm-reason{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .8rem;border-top:1px dashed var(--rule);margin:1rem 0 0;padding:.9rem 0 0;font-size:.92rem}
+.sm-chip{font:500 .8rem var(--mono);border:1px solid var(--rule);border-radius:5px;padding:.15rem .5rem;background:var(--bg)}
+.sm-chip.t{border-color:var(--teal);color:var(--teal)}
+.sm-arrow{color:var(--faint)}
+.sm .a2,.sm .a3,.sm .a5{opacity:0;transform:translateY(4px);transition:opacity .45s,transform .45s}
+.sm.on2 .a2,.sm.on3 .a3,.sm.on5 .a5{opacity:1;transform:none}
+.sm.on3 .sm-read{transition-delay:0s}
+.st-ctl{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:1.1rem 0 .6rem}
+.st-steps{display:inline-flex;flex-wrap:wrap;gap:.25rem;background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:.25rem}
+.st-ctl button{font:500 .8rem var(--mono);border:0;background:transparent;color:var(--muted);padding:.35rem .7rem;border-radius:5px;cursor:pointer}
+.st-steps button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.st-play{border:1px solid var(--rule)!important;background:var(--card)!important;min-width:4.5rem}
+.st-cap{color:var(--muted);font-size:.95rem;min-height:3.2em;margin:0}
+.st-cap b{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){.sm *{transition:none!important}}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.2rem 0 0}
+.stat{border-top:2px solid var(--ink);padding-top:.6rem}
+.stat .v{font-size:1.6rem;font-weight:700;letter-spacing:-.01em}
+.stat .k{font-size:.88rem;color:var(--muted)}
+
+/* Tables */
+.table-wrap{overflow-x:auto;background:var(--card);border:1px solid var(--rule);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:.88rem;font-variant-numeric:tabular-nums}
+th,td{padding:.5rem .7rem;text-align:right;white-space:nowrap;border-bottom:1px solid var(--rule)}
+th:first-child,td:first-child{text-align:left}
+thead th{font-weight:600;color:var(--muted);font-size:.8rem}
+thead tr.grp th{color:var(--ink);font-size:.85rem;text-align:center}
+tbody tr:last-child td{border-bottom:0}
+tr.sub td{background:var(--bg);color:var(--muted);font-size:.78rem;font-weight:600;font-family:var(--mono);padding-top:.35rem;padding-bottom:.35rem}
+tr.ours td{background:var(--teal-soft)}
+tr.ours td:first-child{font-weight:600}
+td.ours{background:var(--teal-soft)}
+td b{font-weight:700}
+td u{text-decoration-color:var(--faint);text-underline-offset:3px}
+td.l,th.l{text-align:left}
+td.c,th.c{text-align:center}
+.note{font-size:.82rem;color:var(--faint);margin:.5rem 0 0}
+
+/* BibTeX */
+.bib{position:relative}
+.bib pre{margin:0;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:1.2rem 1.3rem;overflow-x:auto;font:400 .82rem/1.6 var(--mono)}
+.bib button{position:absolute;top:.6rem;right:.6rem;font:500 .78rem var(--mono);background:var(--bg);border:1px solid var(--rule);border-radius:5px;padding:.25rem .65rem;cursor:pointer;color:var(--ink)}
+
+footer{padding:4rem 0 3rem;color:var(--faint);font-size:.85rem}
+
+@media (max-width:800px){
+  .split,.pair,.sm-body{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wide">
+    <span class="venue">ACL 2026 Main</span>
+    <p class="mark"><b>SituW</b> situation working memory</p>
+    <h1>Injecting Context via Situation Working Memory for Logical Reasoning with LLMs</h1>
+    <p class="authors">
+      <a href="../index.html">Jieun Kim</a><span class="sep">·</span><span>Seoha Lim</span><span class="sep">·</span><span>YoungHae Choi</span><span class="sep">·</span><a href="https://yonsei.elsevierpure.com/en/persons/sung-bae-cho/">Sung-Bae Cho</a>
+    </p>
+    <p class="affil">Yonsei University</p>
+    <nav class="links" aria-label="Resources">
+      <a href="https://aclanthology.org/2026.acl-long.1499.pdf">Paper</a>
+      <a href="https://github.com/lilly9928/SituW">Code</a>
+      <a href="#bibtex">BibTeX</a>
+    </nav>
+  </div>
+  <div class="wide hero-fig">
+    <figure>
+      <div class="plate"><img src="images/SituW_overview.png" alt="SituW overview: the premise is split into sentences; for each sentence a prompt extracts new situational elements, which update the SituW memory of time, space, protagonist, intention and causality; final reasoning combines each sentence with its memory to decide entailment." width="2400" height="901"></div>
+      <figcaption>The context is split into sentences and read in order. For each sentence, an LLM extracts newly implied situational elements and updates the situation working memory, which then guides the final reasoning.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<main>
+  <section id="motivation">
+    <div class="wide split">
+      <div class="text">
+        <p class="label">motivation</p>
+        <h2>Reasoning needs to know what is true now</h2>
+        <p>Reading “Peter took the elevator to the fifth floor. He went to talk to his professor,” people infer that the professor’s office is probably on the fifth floor. Cognitive psychology calls this mental representation a <i>situation model</i>. It is organized along time, space, causality, intention and protagonist, and it is updated with every sentence.</p>
+        <p>LLM logical reasoning often converts text into formal logic instead. Translation loses contextual nuance, and symbolic solvers break on imprecise expressions. SituW gives the LLM an explicit, evolving situation memory to reason over.</p>
+      </div>
+      <figure>
+        <div class="plate"><img src="images/SituW_motivation.png" alt="Human reasoning tracks time, space, intention, causality and protagonists for each sentence of the Peter story; SituW reasoning passes the context through objective and subjective indexing into a situation working memory used by the LLM." width="2400" height="2431" loading="lazy"></div>
+      </figure>
+    </div>
+  </section>
+
+  <section id="abstract">
+    <div class="col">
+      <p class="label">abstract</p>
+      <h2>An explicit situation model for LLM reasoning</h2>
+      <p>Recent advances in large language models (LLMs) have improved logical reasoning by incorporating formal logic or explicit structured representations. However, such methods often lose track of <i>what is true now</i> in multi-step reasoning, failing to maintain a coherent global state and its logical consequences. Motivated by Situation Model Theory in cognitive psychology, which views comprehension as constructing and updating a mental model of events along key dimensions (time, space, causality, intention, protagonist), we propose a cognitively inspired method of <b>Situation Working Memory (SituW)</b> for contextual reasoning in LLMs. SituW first builds a situation representation by decomposing text along these five dimensions, and guides LLM inference with the evolving state. Keeping an explicit, dynamically updated situation memory instead of a static logical form encourages globally consistent reasoning over the situation model rather than raw text. Evaluated in both supervised and prompt-based settings, SituW improves accuracy by 23.3%p and 15.93%p while reducing “uncertain” predictions, suggesting that explicit situation modeling supports more globally consistent LLM reasoning.</p>
+    </div>
+  </section>
+
+  <section id="probe">
+    <div class="wide split">
+      <div class="text">
+        <p class="label">probe</p>
+        <h2>Do LLMs build situation models?</h2>
+        <p>We adapt a classic mental-model experiment to text. Each trial has four sentences that differ in one preposition, and the model picks the <i>confusable pair</i>: the two sentences most likely to describe the same event.</p>
+        <div class="box">
+          <span class="k">example item</span>
+          <ol type="a">
+            <li>The girl was given a complete pedicure at the chiropodist’s.</li>
+            <li>The girl was given a complete pedicure by the chiropodist.</li>
+            <li>The girl had her handbag stolen at the chiropodist’s.</li>
+            <li>The girl had her handbag stolen by the chiropodist.</li>
+          </ol>
+        </div>
+        <p style="margin-top:1rem">Eleven graduate students reach 89.28% on 24 items. LLMs fall far below and seem to rely on surface overlap. Prompting GPT models to first extract time, location, protagonists, cause and intention raises accuracy by 20.8 points for GPT-3.5 and 8.3 for GPT-4o-mini.</p>
+      </div>
+      <figure>
+        <div class="plate"><img src="images/SituW_confusable.png" alt="Confusable pair accuracy: GPT-3.5 and GPT-4o improve by 20.8 and 8.3 points with situation indexing; open LLMs Llama3 8B, Llama3 70B, Llama3.3 70B and Mistral 7B stay well below the human line at 89.28%." width="2400" height="1105" loading="lazy"></div>
+      </figure>
+    </div>
+  </section>
+
+  <section id="method">
+    <div class="col">
+      <p class="label">method</p>
+      <h2>Build the memory sentence by sentence, then reason over it</h2>
+      <p>The situation memory has two parts. <b>Objective indexing</b> records what the text states: time, space and protagonists. <b>Subjective indexing</b> infers what it implies: causality and intention.</p>
+
+      <div class="sm" id="sm">
+        <div class="sm-ctx">
+          <span class="k">context</span>
+          <span class="s1">Zhu Hong: red squirrels make holes in the bark of sugar pines to absorb sap. Since the sap of sugar pine is mainly composed of water and a small amount of sugar, it is roughly certain that red squirrels are looking for water or sugar. Water is easily available in other ways where pine trees grow. Therefore, red pine trees are not trying to dig holes because they are looking for water, they may be looking for sugar.</span>
+          <span class="s2">Lina: it must not be looking for sugar but something else, because the concentration of sugar in sugar pine sap is so low that red squirrels have to drink a lot of sap to get a little sugar.</span>
+        </div>
+        <p class="sm-eq"></p>
+
+        <div class="sm-body">
+          <div class="sm-proc">
+            <div class="sm-step a2">
+              <h4><i>01</i>Objective indexing</h4>
+              <dl><dt>Time</dt><dd>(None)</dd><dt>Space</dt><dd>sugar pines</dd><dt>Protagonist</dt><dd>Lina, Red squirrels</dd></dl>
+            </div>
+            <span class="sm-read a3">02 read memory →</span>
+            <div class="sm-step a3">
+              <h4><i>03</i>Subjective indexing</h4>
+              <dl><dt>Causality</dt><dd>The low concentration of sugar in sugar pine sap</dd><dt>Intention</dt><dd>To absorb sap from sugar pines</dd></dl>
+            </div>
+          </div>
+          <div class="sm-mem">
+            <h4><b>Situation</b> Working Memory</h4>
+            <table>
+              <tbody>
+                <tr><th><span class="grp">objective</span>Time</th><td>(None)</td></tr>
+                <tr><th>Space</th><td>sugar pines</td></tr>
+                <tr><th>Protagonist</th><td>Zhu Hong, Red squirrels<span class="add">, <span class="sm-new">Lina</span></span></td></tr>
+                <tr><th><span class="grp">subjective</span>Causality</th><td>Red squirrels searching for water or sugar<span class="add">; <span class="sm-new">the low concentration of sugar in sugar pine sap</span></span></td></tr>
+                <tr><th>Intention</th><td>Searching for water or sugar; to absorb sap from sugar pines</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="sm-reason a5">
+          <span class="sm-chip">S₁ ⊕ m₁</span><span class="sm-arrow">+</span><span class="sm-chip">S₂ ⊕ m₂</span><span class="sm-arrow">+ … +</span><span class="sm-chip">question</span>
+          <span class="sm-arrow">→</span><span class="sm-chip t">LLM: plan · action · update · process</span>
+          <span class="sm-arrow">→</span><span>True / False / Uncertain</span>
+        </div>
+
+        <div class="st-ctl">
+          <button type="button" class="st-play" aria-pressed="false">pause</button>
+          <div class="st-steps"><button type="button">1 Memory</button><button type="button">2 Objective</button><button type="button">3 Subjective</button><button type="button">4 Update</button><button type="button">5 Reason</button></div>
+        </div>
+        <p class="st-cap" aria-live="polite"></p>
+        <p class="note">Example from Figure 7 of the paper. The updated memory adds the new protagonist and cause to the stored state.</p>
+      </div>
+
+      <div class="pair" style="margin-top:1rem">
+        <div>
+          <h3>Prompt-based construction</h3>
+          <p>At inference time, one short prompt per element fills the memory. Each memory element is then verbalized and appended to the context, objective elements first. The LLM reasons over the enriched context in four steps: Plan, Action, Update and Process.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Element</th><th class="l">Prompt</th></tr></thead>
+              <tbody>
+                <tr><td>Time</td><td class="l">When does this occur?</td></tr>
+                <tr><td>Space</td><td class="l">Where does this occur?</td></tr>
+                <tr><td>Protagonist</td><td class="l">Who is involved?</td></tr>
+                <tr><td>Causality</td><td class="l">What triggered this?</td></tr>
+                <tr><td>Intention</td><td class="l">What is the purpose?</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="note">Each prompt asks for a short phrase or None.</p>
+        </div>
+        <div>
+          <h3>Supervised construction</h3>
+          <p>A GPT teacher reads the context sentence by sentence. For each sentence it writes a memory snippet of the five elements, conditioned on earlier sentences, the memory so far, and the carried-over propositions and protagonists.</p>
+          <p>Each sentence is concatenated with its snippet into a memory trace. Traces are kept only when the teacher’s final answer matches the gold label. An open-source LLM is then fine-tuned on these traces.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results">
+    <div class="col">
+      <p class="label">results</p>
+      <h2>Better accuracy with prompts and with fine-tuning</h2>
+      <p class="lead">Evaluated on PrOntoQA (5-hop), ProofWriter (depth 5), FOLIO and LogiQA 2.0 (NLI) against Standard, CoT, SymbCoT and Logic-LM.</p>
+      <div class="stats">
+        <div class="stat"><div class="v">71.79</div><div class="k">average accuracy with GPT-4o-mini, best among methods</div></div>
+        <div class="stat"><div class="v">+23.3</div><div class="k">average FOLIO gain over vanilla fine-tuning</div></div>
+        <div class="stat"><div class="v">155 vs 269</div><div class="k">“uncertain” predictions, SituW vs Logic-LM</div></div>
+      </div>
+
+      <div class="pair">
+        <div>
+          <h3>Prompt-based setting</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Method</th><th>PrOntoQA</th><th>ProofWriter</th><th>FOLIO</th><th>Avg</th></tr></thead>
+              <tbody>
+                <tr class="sub"><td colspan="5">GPT-3.5-turbo</td></tr>
+                <tr><td>Standard</td><td>47.40</td><td>40.00</td><td>45.09</td><td>50.20</td></tr>
+                <tr><td>CoT</td><td>67.80</td><td>49.17</td><td><b>57.35</b></td><td><u>57.78</u></td></tr>
+                <tr><td>SymbCoT</td><td><u>74.20</u></td><td><u>53.67</u></td><td>39.71</td><td>55.86</td></tr>
+                <tr><td>Logic-LM</td><td>58.80</td><td>51.66</td><td>50.98</td><td>53.71</td></tr>
+                <tr class="ours"><td>SituW</td><td><b>82.20</b></td><td><b>54.67</b></td><td><u>53.43</u></td><td><b>63.43</b></td></tr>
+                <tr class="sub"><td colspan="5">GPT-4o-mini</td></tr>
+                <tr><td>Standard</td><td>58.20</td><td>39.33</td><td>61.76</td><td>53.16</td></tr>
+                <tr><td>CoT</td><td>72.60</td><td>44.16</td><td>64.22</td><td>61.46</td></tr>
+                <tr><td>SymbCoT</td><td>68.20</td><td><u>62.00</u></td><td><u>65.69</u></td><td><u>65.29</u></td></tr>
+                <tr><td>Logic-LM</td><td><u>77.40</u></td><td>37.33</td><td>62.25</td><td>58.99</td></tr>
+                <tr class="ours"><td>SituW</td><td><b>79.00</b></td><td><b>64.33</b></td><td><b>72.06</b></td><td><b>71.79</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="note">Accuracy (%). Bold: best; underlined: second best.</p>
+        </div>
+        <div>
+          <h3>Supervised setting, FOLIO</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr class="grp"><th></th><th>0-shot</th><th colspan="2">2-shot</th><th colspan="2">Fine-tuned</th><th></th></tr>
+                <tr><th>Model</th><th>Direct</th><th>Direct</th><th>CoT</th><th>Vanilla</th><th>SituW</th><th>Δ</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Llama-3.1 8B</td><td><u>47.78</u></td><td>36.95</td><td>44.33</td><td>38.92</td><td class="ours"><b>60.10</b></td><td>+21.18</td></tr>
+                <tr><td>Llama-3.1 70B</td><td>61.58</td><td>67.98</td><td><u>74.38</u></td><td>38.42</td><td class="ours"><b>76.35</b></td><td>+37.93</td></tr>
+                <tr><td>Llama-3.3 70B</td><td>64.04</td><td>65.02</td><td><u>67.00</u></td><td>35.54</td><td class="ours"><b>74.88</b></td><td>+39.34</td></tr>
+                <tr><td>Mistral 7B</td><td>47.29</td><td>44.33</td><td><u>51.23</u></td><td><u>51.23</u></td><td class="ours"><b>62.56</b></td><td>+11.33</td></tr>
+                <tr><td>Qwen2.5 72B</td><td>67.49</td><td>69.95</td><td>55.67</td><td><u>71.14</u></td><td class="ours"><b>78.00</b></td><td>+6.86</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="note">Instruction-tuned models. Δ: gain over vanilla fine-tuning.</p>
+          <p style="margin-top:1rem">Fine-tuning on SituW traces beats both prompting and vanilla fine-tuning on every backbone. Vanilla fine-tuning of the 70B Llama models falls below few-shot prompting; SituW traces lift them by 38 to 39 points.</p>
+        </div>
+      </div>
+
+      <div class="split" style="margin-top:1rem">
+        <div class="text">
+          <h3>LogiQA, zero-shot</h3>
+          <p>SituW improves both standard and CoT prompting with both GPT models, and raises accuracy in every reasoning category: categorical, conjunction, disjunction, necessity and sufficiency.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Model</th><th class="l">Setting</th><th>Vanilla</th><th>SituW</th><th>Δ</th></tr></thead>
+              <tbody>
+                <tr><td>Human</td><td class="l">–</td><td><b>86.63</b></td><td>–</td><td>–</td></tr>
+                <tr><td>GPT-3.5-turbo</td><td class="l">Standard</td><td>50.49</td><td class="ours"><b>54.81</b></td><td>+4.40</td></tr>
+                <tr><td></td><td class="l">CoT</td><td>56.20</td><td class="ours"><b>58.30</b></td><td>+2.10</td></tr>
+                <tr><td>GPT-4o-mini</td><td class="l">Standard</td><td>57.41</td><td class="ours"><b>61.97</b></td><td>+4.56</td></tr>
+                <tr><td></td><td class="l">CoT</td><td>61.45</td><td class="ours"><b>65.78</b></td><td>+4.33</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <figure>
+          <div class="plate"><img src="images/SituW_logiqa_category.png" alt="LogiQA accuracy by category. Standard plus SituW gains 8.7 to 14.4 points; CoT plus SituW gains 7.6 to 29.4 points, largest on categorical questions." width="2400" height="1144" loading="lazy"></div>
+        </figure>
+      </div>
+
+      <div class="split" style="margin-top:1rem">
+        <div class="text">
+          <h3>Fewer “uncertain” answers</h3>
+          <p>Logic-LM predicts “uncertain” 269 times, more than true or false, and gets 42–43% of true and false questions right. SituW commits to true or false more often, predicts “uncertain” 155 times, and reaches 57–60%. Converting text into logical form seems to drop the contextual cues needed to decide.</p>
+        </div>
+        <figure>
+          <div class="plate"><img src="images/SituW_response.png" alt="Left: true and false accuracy, Logic-LM 42.2 and 43.1, SituW 57.1 and 60.2. Right: predicted label counts; Logic-LM predicts 187 true, 144 false, 269 uncertain; SituW predicts 238 true, 201 false, 155 uncertain." width="2400" height="1174" loading="lazy"></div>
+        </figure>
+      </div>
+
+      <h3>What each part contributes</h3>
+      <div class="pair" style="margin-top:0">
+        <div>
+          <p>Causality alone or intention alone adds almost nothing on top of objective indexing. Together they add 10.43 points: the memory needs both to hold a coherent situation.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th class="c">Objective</th><th class="c">Causality</th><th class="c">Intention</th><th>Acc. (%)</th></tr></thead>
+              <tbody>
+                <tr><td class="c">✓</td><td class="c"></td><td class="c"></td><td>54.38</td></tr>
+                <tr><td class="c">✓</td><td class="c">✓</td><td class="c"></td><td>54.41</td></tr>
+                <tr><td class="c">✓</td><td class="c"></td><td class="c">✓</td><td>54.93</td></tr>
+                <tr class="ours"><td class="c">✓</td><td class="c">✓</td><td class="c">✓</td><td><b>64.81</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <p>Open-source models can build and use the memory on their own. Llama3-70B for both construction and inference gives the best open-source result.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr class="grp"><th></th><th colspan="3">Inference model</th></tr>
+                <tr><th>Construction</th><th>Gemma3-27B</th><th>Llama3-70B</th><th>GPT-3.5</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Gemma3-4B</td><td>62.19</td><td>65.15</td><td>54.78</td></tr>
+                <tr><td>Gemma3-27B</td><td>60.65</td><td>63.73</td><td>54.78</td></tr>
+                <tr><td>Llama3-8B</td><td>60.43</td><td>63.33</td><td>54.69</td></tr>
+                <tr><td>Llama3-70B</td><td>61.45</td><td><b>64.85</b></td><td>54.87</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="split" style="margin-top:1rem">
+        <div class="text">
+          <h3>Cost</h3>
+          <p>Averaged over PrOntoQA, ProofWriter and FOLIO, SituW uses about as many tokens as SymbCoT and takes 0.57 s per example, for the best accuracy. Building the memory adds generation steps, which is the main cost of the method.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr class="grp"><th></th><th></th><th colspan="2">Tokens</th><th></th></tr>
+              <tr><th>Method</th><th>Acc. (%)</th><th>in</th><th>out</th><th>Time (s)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Direct</td><td>44.16</td><td>132</td><td>13.33</td><td>0.107</td></tr>
+              <tr><td>CoT</td><td><u>58.10</u></td><td>318</td><td>176</td><td>0.482</td></tr>
+              <tr><td>SymbCoT</td><td>55.86</td><td>4,655</td><td>426</td><td>0.419</td></tr>
+              <tr class="ours"><td>SituW</td><td><b>63.43</b></td><td>4,790</td><td>425</td><td>0.570</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="bibtex">
+    <div class="col">
+      <p class="label">cite</p>
+      <h2>BibTeX</h2>
+      <div class="bib">
+        <button type="button" id="copyBib">copy</button>
+<pre id="bibText">@inproceedings{kim-etal-2026-injecting,
+  title     = {Injecting Context via Situation Working Memory for
+               Logical Reasoning with {LLM}s},
+  author    = {Kim, Jieun and Lim, Seoha and Choi, YoungHae and Cho, Sung-Bae},
+  booktitle = {Proceedings of the 64th Annual Meeting of the Association
+               for Computational Linguistics (Volume 1: Long Papers)},
+  year      = {2026},
+  url       = {https://aclanthology.org/2026.acl-long.1499/}
+}</pre>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="col">Yonsei University · <a href="https://github.com/lilly9928/SituW">Code on GitHub</a></div>
+</footer>
+
+<script>
+(function(){
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var sm=document.getElementById('sm'),B=sm.querySelectorAll('.st-steps button'),cap=sm.querySelector('.st-cap'),
+      play=sm.querySelector('.st-play'),eq=sm.querySelector('.sm-eq'),N=B.length,stage=0,timer=null,playing=!reduce,visible=false;
+  var EQ=[
+    'X = {S₁, …, Sₙ}    M₁ = Update(∅, m₁)',
+    'O = LLM_obj(S₂) = {t, s, p}',
+    'U = LLM_subj(S₂, O) = {c, i}',
+    'M₂ = Update(M₁, m₂),   m₂ = O ∪ U = {t, s, p, c, i}',
+    'ŷ = g(Mₙ, X, T),   T = {S₁ ⊕ m₁, …, Sₙ ⊕ mₙ}'
+  ];
+  var CAP=[
+    '<b>Memory so far.</b> After Zhu Hong’s statement, the memory holds its time, space, protagonists, cause and intention. The next sentence, Lina’s reply, is read against this state.',
+    '<b>Objective indexing.</b> The LLM extracts what the sentence states directly: no time, the sugar pines as the place, and Lina and the red squirrels as protagonists.',
+    '<b>Subjective indexing.</b> Reading the memory and the objective index, the LLM infers what the sentence implies: its cause and the intention behind it.',
+    '<b>Update.</b> New elements are merged into the memory. Lina joins the protagonists and her reason becomes a second cause, so the memory now tracks both views.',
+    '<b>Reason.</b> Each sentence is paired with its memory snippet. The LLM reasons over this trace and the question, then answers True, False or Uncertain.'
+  ];
+  function go(s){
+    stage=s;
+    for(var n=2;n<=N;n++)sm.classList.toggle('on'+n,s>=n);
+    sm.classList.toggle('cur2',s>=1&&s<=4);
+    B.forEach(function(b,i){b.setAttribute('aria-selected',i===s-1?'true':'false')});
+    eq.textContent=EQ[s-1];cap.innerHTML=CAP[s-1];
+  }
+  function schedule(){
+    clearTimeout(timer);
+    if(playing&&visible)timer=setTimeout(function(){go(stage>=N?1:stage+1);schedule()},stage===N?5000:3800);
+  }
+  function setPlaying(v){playing=v;play.textContent=v?'pause':'play';play.setAttribute('aria-pressed',v?'false':'true');schedule()}
+  B.forEach(function(b,i){b.addEventListener('click',function(){go(i+1);setPlaying(false)})});
+  play.addEventListener('click',function(){if(!playing&&stage===N)go(1);setPlaying(!playing)});
+  go(reduce?N:1);setPlaying(playing);
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(e){visible=e[0].isIntersecting;schedule()},{threshold:.4}).observe(sm);
+  }else{visible=true;schedule()}
+
+  var cb=document.getElementById('copyBib'),bt=document.getElementById('bibText');
+  cb.addEventListener('click',function(){
+    var t=bt.innerText,done=function(){cb.textContent='copied';setTimeout(function(){cb.textContent='copy'},1500)};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done)}
+  });
+})();
+</script>
+</body>
+</html>

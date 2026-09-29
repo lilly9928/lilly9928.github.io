@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ViLA: Visual–Linguistic Abductive Reasoning with LLMs for Knowledge-based Visual Question Answering</title>
+<meta name="description" content="ViLA hypothesizes answer candidates, generates visual and linguistic premises, and keeps the most coherent ones through fuzzy scoring. EACL 2026 Findings.">
+<meta property="og:title" content="ViLA: Visual–Linguistic Abductive Reasoning (EACL 2026 Findings)">
+<meta property="og:description" content="Hypothesize, justify with visual and linguistic premises, and select through fuzzy scoring.">
+<meta property="og:image" content="images/ViLA_overview.png">
+<meta name="theme-color" content="#fbfcf8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fbfcf8; --ink:#1d221d; --muted:#626a62; --faint:#8a918a; --rule:#e2e6dc; --card:#ffffff;
+  --blue:#2463a6; --blue-soft:#e5eef8; --pink:#d9486e; --pink-soft:#fce8ee;
+  --good:#2e9e5b; --bad:#c0392b;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration-color:var(--rule);text-underline-offset:3px}
+a:hover{text-decoration-color:var(--blue)}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:4px}
+img{max-width:100%;height:auto;display:block}
+.mono{font-family:var(--mono)}
+
+.col,.wide{max-width:1040px;margin:0 auto;padding:0 1.5rem}
+
+/* Header */
+header{padding:4.5rem 0 2rem}
+.venue{display:inline-block;font-family:var(--mono);font-size:.8rem;color:var(--blue);border:1px solid var(--blue);border-radius:999px;padding:.15rem .7rem;margin-bottom:1.6rem}
+.mark{font-family:var(--mono);font-size:1rem;color:var(--muted);margin:0 0 .6rem}
+.mark b{color:var(--ink);font-weight:500}
+h1{font-size:clamp(1.9rem,4.6vw,3.1rem);line-height:1.15;letter-spacing:-.02em;font-weight:700;margin:0 0 1.4rem}
+.authors{margin:0 0 .2rem;font-size:1.02rem}
+.authors .sep{color:var(--faint);margin:0 .35rem}
+.affil{color:var(--muted);font-size:.95rem;margin:0 0 1.6rem}
+.links{display:flex;flex-wrap:wrap;gap:.5rem}
+.links a{font-family:var(--mono);font-size:.85rem;text-decoration:none;padding:.4rem .9rem;border:1px solid var(--ink);border-radius:6px;background:var(--card)}
+.links a:hover{background:var(--ink);color:var(--bg)}
+
+/* Figures */
+figure{margin:0}
+.plate{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:clamp(.6rem,2vw,1.5rem)}
+.plate img{margin:0 auto}
+figcaption{font-style:italic;color:var(--muted);font-size:.93rem;margin-top:.8rem}
+.hero-fig{margin:1.5rem auto 0}
+
+/* Sections */
+section{padding:4rem 0 0}
+.label{font-family:var(--mono);font-size:.8rem;color:var(--blue);margin:0 0 .4rem}
+h2{font-size:clamp(1.45rem,3vw,1.9rem);line-height:1.25;letter-spacing:-.015em;font-weight:700;margin:0 0 1rem}
+h3{font-size:1.1rem;font-weight:600;margin:2.5rem 0 .8rem}
+p{margin:0 0 1rem}
+.lead{font-size:1.08rem}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:2.5rem;align-items:center}
+.split .text p:last-child{margin-bottom:0}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.5rem;align-items:start}
+.pair h3{margin-top:2.5rem}
+
+/* Abductive chain animation */
+.ab{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:1.2rem 1.3rem;margin:1.2rem 0 0}
+.ab-top{display:grid;grid-template-columns:150px minmax(0,1fr);gap:1.1rem;align-items:center}
+.ab-img{border-radius:6px;border:1px solid var(--rule)}
+.ab-q{font-size:1rem;margin:0 0 .5rem}
+.ab-q span{font:500 .78rem var(--mono);color:var(--bg);background:var(--ink);border-radius:4px;padding:.05rem .4rem;margin-right:.4rem}
+.ab-eq{font:400 .85rem var(--mono);color:var(--muted);background:var(--bg);border-radius:6px;padding:.45rem .7rem;margin:0;overflow-x:auto;white-space:nowrap}
+.ab-legend{display:flex;flex-wrap:wrap;gap:.9rem;font-size:.82rem;color:var(--muted);margin:.9rem 0 0}
+.ab-legend b{font-weight:600;color:var(--ink)}
+.ab-groups{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem;margin:1rem 0 0}
+.ab-g{--c:var(--pink);--cs:var(--pink-soft);border:1px solid var(--rule);border-radius:8px;padding:.8rem .9rem;transition:border-color .4s,opacity .4s}
+.ab-g.kb{--c:var(--blue);--cs:var(--blue-soft)}
+.ab-cand{display:inline-flex;align-items:center;gap:.45rem;font-weight:600;background:var(--c);color:#fff;border-radius:6px;padding:.2rem .7rem}
+.ab-cand i{font:500 .78rem var(--mono);font-style:normal;opacity:.85}
+.ab-prem{list-style:none;padding:0;margin:.7rem 0 0}
+.ab-prem li{background:var(--cs);border-radius:6px;padding:.5rem .65rem;margin:0 0 .45rem;font-size:.92rem}
+.ab-sc{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem .8rem;margin-top:.35rem;font:400 .8rem var(--mono);color:var(--muted)}
+.ab-sc b{color:var(--ink);font-weight:500}
+.ab-val{position:relative;flex:1 1 90px;min-width:90px;height:8px;background:var(--card);border-radius:4px}
+.ab-val i{position:absolute;inset:0 auto 0 0;width:0;border-radius:4px;background:var(--c);transition:width .9s cubic-bezier(.3,.7,.3,1) .5s}
+.ab-val::after{content:"";position:absolute;left:70%;top:-3px;bottom:-3px;width:1.5px;background:var(--ink)}
+.ab-keep{color:var(--good);font-weight:600}
+.ab-ent{font:400 .82rem var(--mono);color:var(--muted);margin:.2rem 0 0}
+.ab-final{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem 1.2rem;border-top:1px dashed var(--rule);margin:1rem 0 0;padding:.9rem 0 0;font-size:.95rem}
+.ab-final .win{font-weight:700;color:var(--blue)}
+.ok{color:var(--good);font-weight:600} .bad{color:var(--bad);font-weight:600}
+.ab .s2,.ab .s3,.ab .s4{opacity:0;transform:translateY(4px);transition:opacity .45s,transform .45s}
+.ab.on2 .s2,.ab.on3 .s3,.ab.on4 .s4{opacity:1;transform:none}
+.ab.on3 .s3{transition-delay:.15s}
+.ab.on3 .ab-val i{width:calc(var(--v)*100%)}
+.ab.on3 .ab-keep{transition-delay:1.3s}
+.ab.on4 .ab-g:not(.kb){opacity:.55}
+.ab.on4 .ab-g.kb{border-color:var(--blue)}
+.st-ctl{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:1.1rem 0 .6rem}
+.st-steps{display:inline-flex;flex-wrap:wrap;gap:.25rem;background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:.25rem}
+.st-ctl button{font:500 .8rem var(--mono);border:0;background:transparent;color:var(--muted);padding:.35rem .7rem;border-radius:5px;cursor:pointer}
+.st-steps button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.st-play{border:1px solid var(--rule)!important;background:var(--card)!important;min-width:4.5rem}
+.st-cap{color:var(--muted);font-size:.95rem;min-height:3.2em;margin:0}
+.st-cap b{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){.ab *{transition:none!important}}
+
+/* Prompt + levels */
+.prompt{margin:0;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:1rem 1.2rem;font:400 .84rem/1.65 var(--mono);white-space:pre-wrap}
+.prompt em{font-style:normal;color:var(--pink);font-weight:500}
+.prompt strong{font-weight:500;color:var(--blue)}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.2rem 0 0}
+.stat{border-top:2px solid var(--ink);padding-top:.6rem}
+.stat .v{font-size:1.6rem;font-weight:700;letter-spacing:-.01em}
+.stat .k{font-size:.88rem;color:var(--muted)}
+
+/* Tables */
+.table-wrap{overflow-x:auto;background:var(--card);border:1px solid var(--rule);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:.88rem;font-variant-numeric:tabular-nums}
+th,td{padding:.5rem .7rem;text-align:right;white-space:nowrap;border-bottom:1px solid var(--rule)}
+th:first-child,td:first-child{text-align:left}
+thead th{font-weight:600;color:var(--muted);font-size:.8rem}
+thead tr.grp th{color:var(--ink);font-size:.85rem;text-align:center}
+tbody tr:last-child td{border-bottom:0}
+tr.sub td{background:var(--bg);color:var(--muted);font-size:.78rem;font-weight:600;font-family:var(--mono);padding-top:.35rem;padding-bottom:.35rem}
+tr.ours td{background:var(--pink-soft)}
+tr.ours td:first-child{font-weight:600}
+td b{font-weight:700}
+td.l{text-align:left}
+.note{font-size:.82rem;color:var(--faint);margin:.5rem 0 0}
+
+/* BibTeX */
+.bib{position:relative}
+.bib pre{margin:0;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:1.2rem 1.3rem;overflow-x:auto;font:400 .82rem/1.6 var(--mono)}
+.bib button{position:absolute;top:.6rem;right:.6rem;font:500 .78rem var(--mono);background:var(--bg);border:1px solid var(--rule);border-radius:5px;padding:.25rem .65rem;cursor:pointer;color:var(--ink)}
+
+footer{padding:4rem 0 3rem;color:var(--faint);font-size:.85rem}
+
+@media (max-width:800px){
+  .split,.pair,.ab-groups{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr}
+  .ab-top{grid-template-columns:96px minmax(0,1fr)}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wide">
+    <span class="venue">EACL 2026 Findings</span>
+    <p class="mark"><b>ViLA</b> visual–linguistic abductive reasoning</p>
+    <h1>Visual–Linguistic Abductive Reasoning with LLMs for Knowledge-based Visual Question Answering</h1>
+    <p class="authors">
+      <a href="../index.html">Jieun Kim</a><span class="sep">·</span><span>Yujin Jeong</span><span class="sep">·</span><a href="https://yonsei.elsevierpure.com/en/persons/sung-bae-cho/">Sung-Bae Cho</a>
+    </p>
+    <p class="affil">Yonsei University</p>
+    <nav class="links" aria-label="Resources">
+      <a href="https://aclanthology.org/2026.findings-eacl.343.pdf">Paper</a>
+      <a href="#bibtex">BibTeX</a>
+    </nav>
+  </div>
+  <div class="wide hero-fig">
+    <figure>
+      <div class="plate"><img src="images/ViLA_overview.png" alt="ViLA overview: a VLM proposes answer candidates and visual hypotheses, an LLM proposes linguistic hypotheses, they form an abductive chain, and fuzzy scoring from both models selects the final hypotheses that the VLM uses to answer." width="2400" height="841"></div>
+      <figcaption>ViLA hypothesizes plausible answers, generates visual and linguistic premises, and keeps the most coherent ones through fuzzy scoring before the VLM gives its final answer.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<main>
+  <section id="motivation">
+    <div class="wide split">
+      <div class="text">
+        <p class="label">motivation</p>
+        <h2>Perception and reasoning run as separate steps</h2>
+        <p>LLM-based multimodal reasoning either aligns image features with the language space or turns the image into text for the LLM. Both keep visual perception and language reasoning apart. Chain-of-thought drifts away from the question's intent. Direct prediction skips the knowledge the question needs.</p>
+        <p>People solve such questions by abduction. They guess candidate answers from what they see, justify each one with visual cues and background knowledge, and keep the explanation that fits best. ViLA models this process across the VLM and the LLM.</p>
+      </div>
+      <figure>
+        <div class="plate"><img src="images/ViLA_motivation.png" alt="For 'What is required to be on the ground to do this sport?', chain-of-thought answers 'suitable environment' and direct prediction answers 'Skis', both wrong; the abductive chain scores premises for Skis and Snow and answers Snow." width="2400" height="1134" loading="lazy"></div>
+      </figure>
+    </div>
+  </section>
+
+  <section id="abstract">
+    <div class="col">
+      <p class="label">abstract</p>
+      <h2>Hypothesize, justify, then select</h2>
+      <p>Recent attempts to leverage large language models (LLMs) for reasoning and pre-trained knowledge in multi-modal reasoning focus on two main approaches: aligning image features with linguistic space, and converting images into textual cues to exploit the implicit reasoning capabilities of LLMs. Although they integrate visual information into the reasoning pipeline, they often treat visual perception and language reasoning as separate processes, limiting the potential for fully unified multi-modal reasoning. In this paper, we propose a novel method, <b>Visual–Linguistic Abductive Reasoning (ViLA)</b>, inspired by human abductive reasoning processes. ViLA hypothesizes a plausible answer, generates the corresponding visual and textual premises, and employs fuzzy scoring to select the most coherent combination, thus deriving the final inference. This process integrates visual and linguistic modalities into interpretable abductive reasoning chains, enabling unified multi-modal reasoning. Without fine-tuning LLMs or retrieving external knowledge, ViLA improves performance by 2.31% on AOKVQA, 1.7% on OKVQA, and 1.7% on GQA over previous state-of-the-art models, while also improving interpretability and stability.</p>
+    </div>
+  </section>
+
+  <section id="method">
+    <div class="col">
+      <p class="label">method</p>
+      <h2>An abductive chain across the VLM and the LLM</h2>
+
+      <div class="ab" id="ab">
+        <div class="ab-top">
+          <img class="ab-img" src="images/ViLA_cats.png" alt="Two cats lying on a desk, one of them on a keyboard." width="1012" height="766">
+          <div>
+            <p class="ab-q"><span>Q</span>Where are the cats sitting on top of?</p>
+            <p class="ab-eq"></p>
+          </div>
+        </div>
+
+        <div class="ab-groups">
+          <div class="ab-g">
+            <span class="ab-cand"><i>o₁</i>desk</span>
+            <ul class="ab-prem s2">
+              <li>Cats are on a desk.
+                <div class="ab-sc s3"><span><b>S<sub>a</sub></b> 0.9</span><span><b>S<sub>r</sub></b> 0.5</span><span class="ab-val" style="--v:.86"><i></i></span><span>0.86</span><span class="ab-keep s3">kept</span></div></li>
+              <li>Desk is a common place for cats to sit.
+                <div class="ab-sc s3"><span><b>S<sub>a</sub></b> 0.9</span><span><b>S<sub>r</sub></b> 0.1</span><span class="ab-val" style="--v:.82"><i></i></span><span>0.82</span><span class="ab-keep s3">kept</span></div></li>
+            </ul>
+            <p class="ab-ent s2">H₁ ∧ H₂ ⊨ desk</p>
+          </div>
+          <div class="ab-g kb">
+            <span class="ab-cand"><i>o₂</i>keyboard</span>
+            <ul class="ab-prem s2">
+              <li>Cats are on keyboard.
+                <div class="ab-sc s3"><span><b>S<sub>a</sub></b> 0.9</span><span><b>S<sub>r</sub></b> 0.5</span><span class="ab-val" style="--v:.86"><i></i></span><span>0.86</span><span class="ab-keep s3">kept</span></div></li>
+              <li>Cats are on computer keyboard.
+                <div class="ab-sc s3"><span><b>S<sub>a</sub></b> 0.9</span><span><b>S<sub>r</sub></b> 0.5</span><span class="ab-val" style="--v:.86"><i></i></span><span>0.86</span><span class="ab-keep s3">kept</span></div></li>
+            </ul>
+            <p class="ab-ent s2">H₃ ∧ H₄ ⊨ keyboard</p>
+          </div>
+        </div>
+
+        <p class="ab-legend s3"><span><b>S<sub>a</sub></b> adequacy to the image (VLM)</span><span><b>S<sub>r</sub></b> relevance to the question (LLM)</span><span>bar: validity μ<sub>V</sub>, line at t = 0.7</span></p>
+
+        <div class="ab-final s4">
+          <span>VLM with H<sub>final</sub> → <span class="win">keyboard</span> <span class="ok">✓</span></span>
+          <span>LLaVA → desk <span class="bad">✗</span></span>
+          <span>CoT → desk <span class="bad">✗</span></span>
+        </div>
+
+        <div class="st-ctl">
+          <button type="button" class="st-play" aria-pressed="false">pause</button>
+          <div class="st-steps"><button type="button">1 Candidates</button><button type="button">2 Premises</button><button type="button">3 Fuzzy scoring</button><button type="button">4 Answer</button></div>
+        </div>
+        <p class="st-cap" aria-live="polite"></p>
+        <p class="note">Example and scores from Figure 6 of the paper. Validity is computed with w<sub>v</sub> = 0.9 and w<sub>l</sub> = 0.1.</p>
+      </div>
+
+      <div class="split" style="margin-top:1rem">
+        <div class="text">
+          <h3>Why keep several candidates</h3>
+          <p>The VLM's first beam is right 58% of the time, but the correct answer is within the top 2 beams 72% of the time and within the top 10, 89%. The model often finds the right answer and then discards it at the final selection. ViLA keeps the top-k beam outputs as answer candidates for abductive reasoning.</p>
+        </div>
+        <figure>
+          <div class="plate"><img src="images/ViLA_beam.png" alt="Top-k accuracy rises from 58% at k=1 to 72% at k=2 and 89% at k=10, while Hit@k falls from 58 to 2." width="2400" height="1357" loading="lazy"></div>
+        </figure>
+      </div>
+
+      <div class="split">
+        <div class="text">
+          <h3>Fuzzy scoring by prompt</h3>
+          <p>Both models score every premise with the same multiple-choice prompt. The VLM judges whether it is <i>reasonable to the image</i> (adequacy μ<sub>A</sub>), and the LLM whether it is <i>relevant to the question</i> (relevance μ<sub>R</sub>). The options map to very low 0.1, low 0.5, medium 0.7, high 0.9 and very high 0.95. The value 0.5 counts as low because both models give moderate scores even for weak entailment.</p>
+          <p>Validity μ<sub>V</sub> = w<sub>v</sub>·μ<sub>A</sub> + w<sub>l</sub>·μ<sub>R</sub>, a convex combination with w<sub>v</sub> + w<sub>l</sub> = 1. Premises with μ<sub>V</sub> ≥ t become H<sub>final</sub>.</p>
+        </div>
+<pre class="prompt">Choose the most appropriate score to indicate
+whether the information provided is {<em>reasonable
+to the image</em> / <strong>relevant to the question</strong>}.
+Return only the letter corresponding to your
+choice from the options below:
+(a) 0.1  (b) 0.5  (c) 0.7  (d) 0.9  (e) 0.95
+(f) unknown</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="results">
+    <div class="col">
+      <p class="label">results</p>
+      <h2>Higher accuracy without fine-tuning or retrieval</h2>
+      <p class="lead">Evaluated on OK-VQA, A-OKVQA and GQA. Unless noted, the VLM is LLaVA-NeXT (Mistral-7B) and the LLM is Mistral-7B, with 2 answer candidates, 2 premises, t = 0.7 and w<sub>v</sub> = 0.9.</p>
+      <div class="stats">
+        <div class="stat"><div class="v">69.98</div><div class="k">A-OKVQA accuracy, best in the comparison</div></div>
+        <div class="stat"><div class="v">68.91</div><div class="k">OK-VQA accuracy, best in the comparison</div></div>
+        <div class="stat"><div class="v">+4.85</div><div class="k">GQA accuracy over LLaVA-NeXT</div></div>
+      </div>
+
+      <div class="pair">
+        <div>
+          <h3>OK-VQA and A-OKVQA</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Method</th><th>OK-VQA</th><th>A-OKVQA</th></tr></thead>
+              <tbody>
+                <tr class="sub"><td colspan="3">Direct answering</td></tr>
+                <tr><td>MAVEx</td><td>41.37</td><td>–</td></tr>
+                <tr><td>UnifER</td><td>42.13</td><td>–</td></tr>
+                <tr><td>ViLBERT</td><td>35.20</td><td>30.60</td></tr>
+                <tr><td>LXMERT</td><td>36.91</td><td>30.70</td></tr>
+                <tr><td>KRISP</td><td>38.40</td><td>33.70</td></tr>
+                <tr><td>PICa</td><td>48.00</td><td>43.37</td></tr>
+                <tr><td>Prophet</td><td>61.10</td><td>58.20</td></tr>
+                <tr><td>LION</td><td>57.33</td><td>60.87</td></tr>
+                <tr><td>QACap</td><td>68.20</td><td>66.30</td></tr>
+                <tr class="sub"><td colspan="3">Structured reasoning</td></tr>
+                <tr><td>ViperGPT</td><td>51.90</td><td>39.50</td></tr>
+                <tr><td>VisProg*</td><td>41.84</td><td>52.12</td></tr>
+                <tr><td>VCTP</td><td>56.20</td><td>53.20</td></tr>
+                <tr class="sub"><td colspan="3">Base VLMs</td></tr>
+                <tr><td>BLIP2</td><td>32.32</td><td>38.94</td></tr>
+                <tr><td>InstructBLIP</td><td>61.16</td><td>62.23</td></tr>
+                <tr><td>LLaVA-NeXT</td><td>55.61</td><td>66.48</td></tr>
+                <tr><td>&nbsp;&nbsp;+ CoT (7B)</td><td>13.34</td><td>34.10</td></tr>
+                <tr><td>&nbsp;&nbsp;+ CoT (GPT-4)</td><td>30.56</td><td>52.71</td></tr>
+                <tr class="sub"><td colspan="3">Base VLMs + ViLA</td></tr>
+                <tr class="ours"><td>BLIP2 + ViLA (7B)</td><td>34.05</td><td>39.37</td></tr>
+                <tr class="ours"><td>InstructBLIP + ViLA (7B)</td><td>61.51</td><td>62.31</td></tr>
+                <tr class="ours"><td>LLaVA-NeXT + ViLA (7B)</td><td>57.92</td><td>68.18</td></tr>
+                <tr class="ours"><td>LLaVA-NeXT-13B + ViLA (GPT-4)</td><td><b>68.91</b></td><td><b>69.98</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="note">Accuracy (%). GPT-4 refers to gpt-4o-mini.</p>
+        </div>
+        <div>
+          <h3>GQA</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Method</th><th class="l">Knowledge source</th><th>GQA</th></tr></thead>
+              <tbody>
+                <tr><td>LXMERT</td><td class="l">LXMERT</td><td>60.0</td></tr>
+                <tr><td>BLIP2</td><td class="l">Vicuna-13B</td><td>41.0</td></tr>
+                <tr><td>InstructBLIP</td><td class="l">Vicuna-7B</td><td>49.2</td></tr>
+                <tr><td>InstructBLIP</td><td class="l">Vicuna-13B</td><td>49.5</td></tr>
+                <tr><td>ViperGPT</td><td class="l">GPT-3</td><td>48.1</td></tr>
+                <tr><td>VisProg</td><td class="l">CLIP, GPT-3</td><td>50.5</td></tr>
+                <tr><td>LLaVA-NeXT</td><td class="l">Mistral-7B</td><td>58.74</td></tr>
+                <tr><td>&nbsp;&nbsp;+ CoT</td><td class="l">Mistral-7B</td><td>32.1</td></tr>
+                <tr class="ours"><td>&nbsp;&nbsp;+ ViLA</td><td class="l">Mistral-7B</td><td><b>63.59</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="note">Accuracy (%) on GQA test-dev.</p>
+          <p style="margin-top:1rem">Turning the image into text for chain-of-thought hurts: LLaVA-NeXT drops from 58.74 to 32.1 on GQA with CoT. ViLA keeps each modality as its own premises and gains 4.85 instead.</p>
+        </div>
+      </div>
+
+      <div class="split" style="margin-top:1rem">
+        <div class="text">
+          <h3>Reasoning depth and question type</h3>
+          <p>On GQA, ViLA beats LLaVA at every reasoning depth, most at one step (+18.1). It improves both binary and open questions. Its predicted answer distribution is also closer to the ground truth, with a lower chi-square distance (Dist).</p>
+        </div>
+        <figure>
+          <div class="plate"><img src="images/ViLA_steps_types.png" alt="GQA accuracy of LLaVA and ViLA by reasoning step (gains +18.1, +7.9, +0.9, +2.3, +0.4) and by question type (Binary +1.9, Open +7.3, Acc +4.9, Dist -0.1)." width="2400" height="1133" loading="lazy"></div>
+        </figure>
+      </div>
+
+      <h3>GQA question categories</h3>
+      <p>ViLA improves every structural and semantic category. The largest gains are in <i>Query</i> among structural types and in <i>Global</i> and <i>Category</i> among semantic types.</p>
+      <div class="pair" style="margin-top:0">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr class="grp"><th></th><th colspan="6">Structural reasoning</th></tr>
+              <tr><th>Model</th><th>Cho</th><th>Comp</th><th>Log</th><th>Qry</th><th>Ver</th><th>Avg</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>LLaVA</td><td>84.15</td><td>67.23</td><td>77.93</td><td>71.22</td><td>81.35</td><td>76.38</td></tr>
+              <tr class="ours"><td>+ ViLA</td><td><b>85.56</b></td><td><b>68.25</b></td><td><b>79.87</b></td><td><b>78.55</b></td><td><b>83.75</b></td><td><b>79.20</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr class="grp"><th></th><th colspan="6">Semantic reasoning</th></tr>
+              <tr><th>Model</th><th>Attr</th><th>Cat</th><th>Glob</th><th>Obj</th><th>Rel</th><th>Avg</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>LLaVA</td><td>68.01</td><td>37.95</td><td>21.66</td><td>84.32</td><td>51.53</td><td>52.69</td></tr>
+              <tr class="ours"><td>+ ViLA</td><td><b>71.33</b></td><td><b>51.72</b></td><td><b>64.33</b></td><td><b>86.89</b></td><td><b>54.97</b></td><td><b>65.85</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="split" style="margin-top:1rem">
+        <div class="text">
+          <h3>Rationale quality</h3>
+          <p>On the A-OKVQA validation set, ViLA's rationales are closer to the ground-truth rationales than chain-of-thought rationales from the same LLM and from GPT-4o-mini. Similarity is the average cosine similarity of CLIP (ViT-B/16) text embeddings. CoT* generates the rationale before the answer.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th class="l">LLM</th><th>Sentence similarity</th></tr></thead>
+            <tbody>
+              <tr><td>CoT</td><td class="l">Mistral-7B</td><td>38.7</td></tr>
+              <tr><td>CoT*</td><td class="l">Mistral-7B</td><td>40.9</td></tr>
+              <tr><td>CoT</td><td class="l">GPT-4o-mini</td><td>39.02</td></tr>
+              <tr class="ours"><td>ViLA</td><td class="l">Mistral-7B</td><td><b>44.8</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <h3>Qualitative examples</h3>
+      <p>For each answer candidate, ViLA builds premises and scores them with adequacy S<sub>a</sub> and relevance S<sub>r</sub>; the premises shown passed the fuzzy evaluation. With these premises, ViLA answers <i>keyboard</i> and <i>water</i>, while LLaVA and CoT answer <i>desk</i> and <i>pond</i>.</p>
+      <figure>
+        <div class="plate"><img src="images/ViLA_qualitative.png" alt="Two examples. Cats: premises for desk and keyboard with their scores; LLaVA and CoT answer desk, ViLA answers keyboard. Zebras: premises for pond and water; LLaVA and CoT answer pond, ViLA answers water." width="2400" height="480" loading="lazy"></div>
+      </figure>
+
+      <h3>Ablations</h3>
+      <div class="pair" style="margin-top:0">
+        <div>
+          <p>Accuracy stays at 66.41 for VLM weights 0.1 to 0.8 and jumps to 68.18 at w<sub>v</sub> = 0.9. Visual adequacy matters more than textual relevance when judging premises.</p>
+          <figure><div class="plate"><img src="images/ViLA_vlm_weight.png" alt="Accuracy is flat at about 66.4% for VLM weight 0.1 to 0.8 and rises to about 68.2% at 0.9." width="1686" height="1251" loading="lazy"></div></figure>
+        </div>
+        <div>
+          <p>On A-OKVQA validation, 3 premises with 1 candidate or 2 of each work best. Too many premises or candidates add ambiguous evidence and lower accuracy.</p>
+          <figure><div class="plate"><img src="images/ViLA_heatmap.png" alt="Accuracy heatmap over number of answer candidates (1 to 5) and premises (1 to 5); the best cells are 68.18 at 1 candidate and 3 premises and 68.03 at 2 and 2." width="2400" height="1883" loading="lazy"></div></figure>
+        </div>
+      </div>
+      <div class="split" style="margin-top:1.5rem">
+        <div class="text">
+          <p>Premises from each model help in different ways. Using only the LLM's or only the VLM's premises gives 65.33; combining both gives 68.18, a gain of 2.85 points.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>LLM premises</th><th>VLM premises</th><th>Acc. (%)</th></tr></thead>
+            <tbody>
+              <tr><td>✓</td><td></td><td>65.33</td></tr>
+              <tr><td></td><td>✓</td><td>65.33</td></tr>
+              <tr class="ours"><td>✓</td><td>✓</td><td><b>68.18</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="bibtex">
+    <div class="col">
+      <p class="label">cite</p>
+      <h2>BibTeX</h2>
+      <div class="bib">
+        <button type="button" id="copyBib">copy</button>
+<pre id="bibText">@inproceedings{kim-etal-2026-visual,
+  title     = {Visual{--}Linguistic Abductive Reasoning with {LLM}s for
+               Knowledge-based Visual Question Answering},
+  author    = {Kim, Jieun and Jeong, Yujin and Cho, Sung-Bae},
+  booktitle = {Findings of the Association for Computational Linguistics:
+               EACL 2026},
+  year      = {2026},
+  url       = {https://aclanthology.org/2026.findings-eacl.343/}
+}</pre>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="col">Yonsei University · <a href="../index.html">Jieun Kim</a></div>
+</footer>
+
+<script>
+(function(){
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var ab=document.getElementById('ab'),B=ab.querySelectorAll('.st-steps button'),cap=ab.querySelector('.st-cap'),
+      play=ab.querySelector('.st-play'),eq=ab.querySelector('.ab-eq'),N=B.length,stage=0,timer=null,playing=!reduce,visible=false;
+  var EQ=[
+    'O_k = top-k beam outputs of P_θ(Y | X_Q, X_V)',
+    'Hᵛ = P_VLM(h | X_V, o_k)    Hˡ = P_LLM(h | X_Q, o_k)',
+    'μ_V(H) = 0.9·μ_A(H) + 0.1·μ_R(H) ≥ t = 0.7',
+    'Y ~ P_θ(· | X_Q, X_V, H_final)'
+  ];
+  var CAP=[
+    '<b>Answer candidates.</b> Instead of committing to one answer, the VLM keeps its top-k beam outputs as hypotheses. Here k = 2: desk and keyboard.',
+    '<b>Premises.</b> For each candidate, the VLM writes visual premises from the image and the LLM writes linguistic premises from the question. Each set of premises and its candidate form one rule, premises ⊨ candidate.',
+    '<b>Fuzzy scoring.</b> The VLM rates each premise’s adequacy to the image (S<sub>a</sub>), the LLM its relevance to the question (S<sub>r</sub>). Validity combines them; premises below t = 0.7 are dropped. The four shown here all pass.',
+    '<b>Final answer.</b> The VLM answers again, now conditioned on the kept premises H<sub>final</sub>. ViLA answers keyboard; LLaVA and CoT both answer desk.'
+  ];
+  function go(s){
+    stage=s;
+    for(var n=2;n<=N;n++)ab.classList.toggle('on'+n,s>=n);
+    B.forEach(function(b,i){b.setAttribute('aria-selected',i===s-1?'true':'false')});
+    eq.textContent=EQ[s-1];cap.innerHTML=CAP[s-1];
+  }
+  function schedule(){
+    clearTimeout(timer);
+    if(playing&&visible)timer=setTimeout(function(){go(stage>=N?1:stage+1);schedule()},stage===N?5000:3800);
+  }
+  function setPlaying(v){playing=v;play.textContent=v?'pause':'play';play.setAttribute('aria-pressed',v?'false':'true');schedule()}
+  B.forEach(function(b,i){b.addEventListener('click',function(){go(i+1);setPlaying(false)})});
+  play.addEventListener('click',function(){if(!playing&&stage===N)go(1);setPlaying(!playing)});
+  go(reduce?N:1);setPlaying(playing);
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(e){visible=e[0].isIntersecting;schedule()},{threshold:.4}).observe(ab);
+  }else{visible=true;schedule()}
+
+  var cb=document.getElementById('copyBib'),bt=document.getElementById('bibText');
+  cb.addEventListener('click',function(){
+    var t=bt.innerText,done=function(){cb.textContent='copied';setTimeout(function(){cb.textContent='copy'},1500)};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done)}
+  });
+})();
+</script>
+</body>
+</html>

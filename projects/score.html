@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SCoRE: Spatial Reasoning in Large Vision-Language Models via Egocentric-to-Allocentric Transformation</title>
+<meta name="description" content="SCoRE trains LVLMs to transform view-specific egocentric relations into a shared allocentric frame, with a multi-view consistency reward. EMNLP 2026 Findings.">
+<meta property="og:title" content="SCoRE: Egocentric-to-Allocentric Spatial Reasoning (EMNLP 2026 Findings)">
+<meta property="og:description" content="Different views, one scene: train LVLMs to agree on spatial relations across viewpoints.">
+<meta property="og:image" content="images/SCoRE_overview.png">
+<meta name="theme-color" content="#fbfcf8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fbfcf8; --ink:#1d221d; --muted:#626a62; --faint:#8a918a; --rule:#e2e6dc; --card:#ffffff;
+  --mint:#3f8f8a; --mint-soft:#e2f0ef; --peach:#e0843a; --peach-soft:#fdf0e3; --lav:#8a6bb0; --lav-soft:#efe9f6;
+  --good:#2e9e5b; --bad:#c0392b;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration-color:var(--rule);text-underline-offset:3px}
+a:hover{text-decoration-color:var(--mint)}
+:focus-visible{outline:2px solid var(--mint);outline-offset:3px;border-radius:4px}
+img{max-width:100%;height:auto;display:block}
+
+.col,.wide{max-width:1040px;margin:0 auto;padding:0 1.5rem}
+
+/* Header */
+header{padding:4.5rem 0 2rem}
+.venue{display:inline-block;font-family:var(--mono);font-size:.8rem;color:var(--mint);border:1px solid var(--mint);border-radius:999px;padding:.15rem .7rem;margin-bottom:1.6rem}
+.mark{font-family:var(--mono);font-size:1rem;color:var(--muted);margin:0 0 .6rem}
+.mark b{color:var(--ink);font-weight:500}
+h1{font-size:clamp(1.9rem,4.6vw,3.1rem);line-height:1.15;letter-spacing:-.02em;font-weight:700;margin:0 0 1.4rem}
+.authors{margin:0 0 .2rem;font-size:1.02rem}
+.authors .sep{color:var(--faint);margin:0 .35rem}
+.authors sup{color:var(--muted)}
+.affil{color:var(--muted);font-size:.95rem;margin:0 0 1.6rem}
+.links{display:flex;flex-wrap:wrap;gap:.5rem}
+.links a{font-family:var(--mono);font-size:.85rem;text-decoration:none;padding:.4rem .9rem;border:1px solid var(--ink);border-radius:6px;background:var(--card)}
+.links a:hover{background:var(--ink);color:var(--bg)}
+
+/* Figures */
+figure{margin:0}
+.plate{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:clamp(.6rem,2vw,1.5rem)}
+.plate img{margin:0 auto}
+figcaption{font-style:italic;color:var(--muted);font-size:.93rem;margin-top:.8rem}
+.hero-fig{margin:1.5rem auto 0}
+
+/* Sections */
+section{padding:4rem 0 0}
+.label{font-family:var(--mono);font-size:.8rem;color:var(--mint);margin:0 0 .4rem}
+h2{font-size:clamp(1.45rem,3vw,1.9rem);line-height:1.25;letter-spacing:-.015em;font-weight:700;margin:0 0 1rem}
+h3{font-size:1.1rem;font-weight:600;margin:2.5rem 0 .8rem}
+p{margin:0 0 1rem}
+.lead{font-size:1.08rem}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:2.5rem;align-items:center}
+.split .text p:last-child{margin-bottom:0}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.5rem;align-items:start}
+.formula{font:400 .88rem/1.8 var(--mono);background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:.7rem 1rem;margin:0 0 1rem;overflow-x:auto;white-space:nowrap}
+.formula b{font-weight:500;color:var(--mint)}
+
+/* View-consistency animation */
+.vc{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:1.2rem 1.3rem;margin:1.2rem 0 0}
+.vc-q{font-size:1rem;margin:0 0 .9rem}
+.vc-q span{font:500 .78rem var(--mono);color:var(--bg);background:var(--ink);border-radius:4px;padding:.05rem .4rem;margin-right:.4rem}
+.vc-q em{font-style:normal;color:var(--peach);font-weight:600}
+.vc-views{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.9rem}
+.vc-v{border:1px solid var(--rule);border-radius:8px;overflow:hidden;background:var(--card);transition:border-color .4s}
+.vc-img{position:relative}
+.vc-img img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.vc-img b{position:absolute;left:.4rem;top:.4rem;font:500 .75rem var(--mono);color:#fff;background:var(--ink);border-radius:3px;padding:.05rem .35rem}
+.vc-ego{display:grid;grid-template-columns:auto 1fr;gap:.1rem .6rem;padding:.55rem .7rem 0;font-size:.88rem}
+.vc-ego dt{color:var(--muted)}
+.vc-ego dd{margin:0;font-weight:600}
+.vc-ans{display:flex;align-items:center;justify-content:space-between;gap:.4rem;margin:.55rem .7rem .7rem;padding:.35rem .55rem;border-radius:6px;background:var(--bg);font-size:.88rem;min-height:2.1rem}
+.vc-ans .who{font:500 .74rem var(--mono);color:var(--muted)}
+.vc-ans .val{font-weight:600}
+.vc-ans .ok{color:var(--good)} .vc-ans .bad{color:var(--bad)}
+.vc-tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.8rem;margin:1rem 0 0}
+.vc-step{border:1.5px solid var(--peach);background:var(--peach-soft);border-radius:8px;padding:.6rem .8rem;font-size:.9rem}
+.vc-step h4{margin:0 0 .25rem;font-size:.9rem;font-weight:600}
+.vc-step h4 i{font-style:normal;font:500 .74rem var(--mono);color:var(--peach);margin-right:.35rem}
+.vc-step p{margin:0}
+.vc-sum{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem 1rem;border-top:1px dashed var(--rule);margin:1rem 0 0;padding:.9rem 0 0;font-size:.92rem}
+.vc-sum .chip{font:500 .8rem var(--mono);border:1px solid var(--mint);color:var(--mint);border-radius:5px;padding:.15rem .5rem}
+.vc .a2,.vc .a3,.vc .a4,.vc .a5{opacity:0;transform:translateY(4px);transition:opacity .45s,transform .45s}
+.vc.on2 .a2,.vc.on3 .a3,.vc.on4 .a4,.vc.on5 .a5{opacity:1;transform:none}
+.vc .vc-step:nth-child(2){transition-delay:.25s} .vc .vc-step:nth-child(3){transition-delay:.5s}
+.vc .q-ans,.vc .s-ans{display:none}
+.vc.show-q .q-ans{display:flex}
+.vc.show-s .s-ans{display:flex}
+.vc.show-s .vc-v{border-color:var(--mint)}
+.st-ctl{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:1.1rem 0 .6rem}
+.st-steps{display:inline-flex;flex-wrap:wrap;gap:.25rem;background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:.25rem}
+.st-ctl button{font:500 .8rem var(--mono);border:0;background:transparent;color:var(--muted);padding:.35rem .7rem;border-radius:5px;cursor:pointer}
+.st-steps button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.st-play{border:1px solid var(--rule)!important;background:var(--card)!important;min-width:4.5rem}
+.st-cap{color:var(--muted);font-size:.95rem;min-height:3.2em;margin:0}
+.st-cap b{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){.vc *{transition:none!important}}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1.2rem 0 0}
+.stat{border-top:2px solid var(--ink);padding-top:.6rem}
+.stat .v{font-size:1.6rem;font-weight:700;letter-spacing:-.01em}
+.stat .k{font-size:.88rem;color:var(--muted)}
+
+/* Tables */
+.table-wrap{overflow-x:auto;background:var(--card);border:1px solid var(--rule);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:.88rem;font-variant-numeric:tabular-nums}
+th,td{padding:.5rem .7rem;text-align:right;white-space:nowrap;border-bottom:1px solid var(--rule)}
+th:first-child,td:first-child{text-align:left}
+thead th{font-weight:600;color:var(--muted);font-size:.8rem}
+thead tr.grp th{color:var(--ink);font-size:.85rem;text-align:center}
+tbody tr:last-child td{border-bottom:0}
+tr.sub td{background:var(--bg);color:var(--muted);font-size:.78rem;font-weight:600;font-family:var(--mono);padding-top:.35rem;padding-bottom:.35rem}
+tr.ours td{background:var(--mint-soft)}
+tr.ours td:first-child{font-weight:600}
+td b{font-weight:700}
+td u{text-decoration-color:var(--faint);text-underline-offset:3px}
+td.c,th.c{text-align:center}
+td small{color:var(--muted);font-size:.78em}
+.note{font-size:.82rem;color:var(--faint);margin:.5rem 0 0}
+
+/* BibTeX */
+.bib{position:relative}
+.bib pre{margin:0;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:1.2rem 1.3rem;overflow-x:auto;font:400 .82rem/1.6 var(--mono)}
+.bib button{position:absolute;top:.6rem;right:.6rem;font:500 .78rem var(--mono);background:var(--bg);border:1px solid var(--rule);border-radius:5px;padding:.25rem .65rem;cursor:pointer;color:var(--ink)}
+
+footer{padding:4rem 0 3rem;color:var(--faint);font-size:.85rem}
+
+@media (max-width:800px){
+  .split,.pair,.vc-tr{grid-template-columns:1fr}
+  .vc-views{grid-template-columns:1fr 1fr 1fr;gap:.5rem}
+  .vc-ego{font-size:.78rem;padding:.4rem .45rem 0}
+  .vc-ans{margin:.4rem .45rem .5rem;font-size:.78rem;padding:.3rem .4rem}
+  .stats{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wide">
+    <span class="venue">EMNLP 2026 Findings</span>
+    <p class="mark"><b>SCoRE</b> spatial consistency reasoning</p>
+    <h1>Spatial Reasoning in Large Vision-Language Models via Egocentric-to-Allocentric Transformation</h1>
+    <p class="authors">
+      <span>Yoonji Kim<sup>*</sup></span><span class="sep">·</span><a href="../index.html">Jieun Kim</a><sup>*</sup><span class="sep">·</span><a href="https://yonsei.elsevierpure.com/en/persons/sung-bae-cho/">Sung-Bae Cho</a>
+    </p>
+    <p class="affil">Yonsei University · <sup>*</sup>Equal contribution</p>
+    <nav class="links" aria-label="Resources">
+      <a href="#bibtex">BibTeX</a>
+    </nav>
+  </div>
+  <div class="wide hero-fig">
+    <figure>
+      <div class="plate"><img src="images/SCoRE_overview.png" alt="SCoRE overview: stage 1 learns egocentric spatial grounding from single camera views; stage 2 learns perspective-taking reasoning with egocentric observation, decentering, mental rotation and allocentric conclusion, then GRPO with 2 to 8 views and reward 0.3 accuracy + 0.6 consistency + 0.1 format." width="2400" height="1046"></div>
+      <figcaption>Stage 1 builds camera-centric spatial perception from single views. Stage 2 teaches egocentric-to-allocentric transformation with structured reasoning traces, then refines the policy with GRPO and a cross-view consistency reward.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<main>
+  <section id="motivation">
+    <div class="wide split">
+      <div class="text">
+        <p class="label">motivation</p>
+        <h2>Same scene, different views, different answers</h2>
+        <p>An LVLM can answer a spatial question correctly from one view of a scene and wrongly from another. Asked where the road is when sitting on the bench, Qwen2.5-VL answers front, left and behind for three views of the same park.</p>
+        <p>Existing training supervises only the final answer, so models learn view-specific shortcuts. People instead transform what they see (egocentric) into a frame tied to the scene (allocentric), where the answer no longer depends on the viewpoint. SCoRE trains an LVLM to do this transformation explicitly.</p>
+      </div>
+      <figure>
+        <div class="plate"><img src="images/SCoRE_motivation.jpg" alt="A park with a bench and a road seen from three cameras. Qwen answers front, left and behind for the three views; SCoRE answers front for all. Below: egocentric relations per view, then decentering, mental rotation and reference frame coordination leading to the answer front." width="2400" height="2561" loading="lazy"></div>
+      </figure>
+    </div>
+  </section>
+
+  <section id="abstract">
+    <div class="col">
+      <p class="label">abstract</p>
+      <h2>Reasoning in a shared, scene-centered frame</h2>
+      <p>Spatial reasoning in large vision-language models involves inferring view-specific spatial relations and integrating them into a consistent scene-centered representation. However, existing approaches often learn view-dependent relations tied to individual camera frames, which limits their ability to form viewpoint-invariant spatial representations. Motivated by cognitive models of spatial perspective-taking, we propose <b>SCoRE</b> (Spatial Consistency Reasoning), a method that realizes multi-view spatial reasoning with egocentric-to-allocentric transformation, which first trains the model to infer egocentric object relations from single-view observations, and then applies reinforcement learning to encourage the model to estimate viewpoint orientation, transform egocentric relations into a shared scene-centered reference frame, and predict allocentric object relations. To enforce viewpoint-invariant reasoning, we optimize the model with a multi-view consistency reward that aligns predictions from different views in the common allocentric space. Experiments show that SCoRE improves spatial reasoning performance by +3.69%p on multi-view benchmarks and +4.72%p on general spatial reasoning benchmarks over the state-of-the-art methods, demonstrating the effectiveness of explicit reference-frame transformation for robust multi-view spatial understanding.</p>
+    </div>
+  </section>
+
+  <section id="method">
+    <div class="col">
+      <p class="label">method</p>
+      <h2>From what each camera sees to what holds for the scene</h2>
+      <p>SCoRE writes its reasoning in four parts: the egocentric observation r<sup>ego</sup>, the facing direction of the reference subject r<sup>head</sup>, the transformation r<sup>trans</sup>, and the allocentric conclusion r<sup>allo</sup>.</p>
+
+      <div class="vc" id="vc">
+        <p class="vc-q"><span>Q</span>When I’m <em>sitting on the bench</em>, where is the <em>road</em> relative to me?</p>
+        <div class="vc-views">
+          <div class="vc-v">
+            <div class="vc-img"><img src="images/SCoRE_v1.jpg" alt="View 1 of the park, bench on the right and road on the left." width="636" height="562"><b>V1</b></div>
+            <dl class="vc-ego a2"><dt>bench</dt><dd>right</dd><dt>road</dt><dd>left</dd></dl>
+            <div class="vc-ans q-ans"><span class="who">Qwen</span><span class="val">front <span class="ok">✓</span></span></div>
+            <div class="vc-ans s-ans"><span class="who">SCoRE</span><span class="val">front <span class="ok">✓</span></span></div>
+          </div>
+          <div class="vc-v">
+            <div class="vc-img"><img src="images/SCoRE_v2.jpg" alt="View 2 of the park, bench on the right and road on the left." width="636" height="502"><b>V2</b></div>
+            <dl class="vc-ego a2"><dt>bench</dt><dd>right</dd><dt>road</dt><dd>left</dd></dl>
+            <div class="vc-ans q-ans"><span class="who">Qwen</span><span class="val">left <span class="bad">✗</span></span></div>
+            <div class="vc-ans s-ans"><span class="who">SCoRE</span><span class="val">front <span class="ok">✓</span></span></div>
+          </div>
+          <div class="vc-v">
+            <div class="vc-img"><img src="images/SCoRE_v3.jpg" alt="View 3 of the park, bench in front and road behind." width="636" height="483"><b>V3</b></div>
+            <dl class="vc-ego a2"><dt>bench</dt><dd>front</dd><dt>road</dt><dd>behind</dd></dl>
+            <div class="vc-ans q-ans"><span class="who">Qwen</span><span class="val">behind <span class="bad">✗</span></span></div>
+            <div class="vc-ans s-ans"><span class="who">SCoRE</span><span class="val">front <span class="ok">✓</span></span></div>
+          </div>
+        </div>
+
+        <div class="vc-tr">
+          <div class="vc-step a4"><h4><i>01</i>Decentering</h4><p>In view 1, the bench faces left.</p></div>
+          <div class="vc-step a4"><h4><i>02</i>Mental rotation</h4><p>The road is on the camera’s left, which is in front of the bench.</p></div>
+          <div class="vc-step a4"><h4><i>03</i>Reference-frame coordination</h4><p>From the bench, the road is in front.</p></div>
+        </div>
+
+        <div class="vc-sum a5">
+          <span>V1, V2, V3 → <b>front</b></span>
+          <span class="chip">R_cons: every view agrees with the answer</span>
+        </div>
+
+        <div class="st-ctl">
+          <button type="button" class="st-play" aria-pressed="false">pause</button>
+          <div class="st-steps"><button type="button">1 Views</button><button type="button">2 Egocentric</button><button type="button">3 Base model</button><button type="button">4 Transform</button><button type="button">5 Consistent</button></div>
+        </div>
+        <p class="st-cap" aria-live="polite"></p>
+        <p class="note">Example from Figure 1 of the paper.</p>
+      </div>
+
+      <div class="split" style="margin-top:1rem">
+        <div class="text">
+          <h3>Why train it, not prompt it</h3>
+          <p>Prompting five LVLMs to reason from egocentric to allocentric view helps on the multi-view data, but the gains are uneven across models and sensitive to how the prompt is written. SCoRE therefore builds the transformation into training.</p>
+        </div>
+        <figure>
+          <div class="plate"><img src="images/SCoRE_cot.png" alt="Accuracy of five LVLMs on multi-view data with and without egocentric-to-allocentric chain-of-thought prompting." width="2400" height="1499" loading="lazy"></div>
+        </figure>
+      </div>
+
+      <div class="pair" style="margin-top:1rem">
+        <div>
+          <h3>Stage 1: egocentric spatial grounding</h3>
+          <p>Supervised fine-tuning on 4,240 single-view questions such as “From the camera’s perspective, where is the chair relative to the black thing?” The model answers with one of eight directions. No reasoning trace is needed at this stage.</p>
+          <h3>Stage 2: perspective-taking reasoning</h3>
+          <p>Transformation fine-tuning on 788 four-view samples teaches the trace format: for each view, where the target appears, which way the subject faces, and the transformed relation, then one final answer. Traces are generated automatically from SCOPE scene metadata and camera poses.</p>
+          <p>GRPO then trains on 5,516 samples with 2, 4, 6 or 8 views and G = 4 rollouts, without a reference trace.</p>
+        </div>
+        <div>
+          <h3>Consistency reward</h3>
+          <p class="formula">R = 0.3·R<sub>acc</sub> + <b>0.6·R<sub>cons</sub></b> + 0.1·R<sub>fmt</sub></p>
+          <p>From each rollout, SCoRE reads the conclusion after “Therefore” in every view block, giving the set of view-wise answers 𝒱.</p>
+          <p class="formula">R<sub>cons</sub> = R<sub>match</sub> − 0.3·R<sub>uniq</sub><br>R<sub>match</sub> = share of views that match the answer<br>R<sub>uniq</sub> = (distinct answers − 1) / |𝒱|</p>
+          <p>A rollout with no view conclusions gets −0.5. R<sub>acc</sub> is +1 or −1 for the final answer, and R<sub>fmt</sub> gives 0.25 for each required part of the trace. Consistency has the largest weight because agreement across views is the goal.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results">
+    <div class="col">
+      <p class="label">results</p>
+      <h2>More accurate and more consistent across views</h2>
+      <p class="lead">Qwen2.5-VL-7B trained with SCoRE, compared with GRPO-based spatial reasoning models: VILASR, SpatialReasoner, SpatialThinker and Spatial-SSRL. In-domain: MindCube, MMSI-Bench, ViewSpatial-Bench. Out-of-domain: What’sUp, SPAR-Bench, BLINK.</p>
+      <div class="stats">
+        <div class="stat"><div class="v">+3.69</div><div class="k">multi-view accuracy over the best prior model, averaged per benchmark</div></div>
+        <div class="stat"><div class="v">+4.72</div><div class="k">general spatial accuracy over the best prior model</div></div>
+        <div class="stat"><div class="v">34.0</div><div class="k">global consistency on MindCube-Hard, up from 23.0</div></div>
+      </div>
+
+      <h3>Multi-view spatial reasoning</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr class="grp"><th></th><th colspan="4">MindCube</th><th colspan="5">MMSI-Bench</th><th></th><th></th></tr>
+            <tr><th>Model</th><th>Rotation</th><th>Among</th><th>Around</th><th>Avg.</th><th>Positional</th><th>Attribute</th><th>Motion</th><th>MSR</th><th>Avg.</th><th>Avg.</th><th>Δ</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Qwen2.5-VL-7B</td><td>31.00</td><td>30.17</td><td>27.25</td><td>29.47</td><td>28.87</td><td>25.53</td><td>20.61</td><td>19.70</td><td>25.40</td><td>27.44</td><td>–</td></tr>
+            <tr class="sub"><td colspan="12">Baselines</td></tr>
+            <tr><td>VILASR-7B</td><td>33.00</td><td>28.83</td><td>25.00</td><td>28.94</td><td><b>33.36</b></td><td><b>28.60</b></td><td>18.62</td><td>24.75</td><td><u>28.80</u></td><td>28.87</td><td>+1.43</td></tr>
+            <tr><td>SpatialReasoner</td><td>32.50</td><td>38.67</td><td><u>29.25</u></td><td>34.50</td><td>20.87</td><td><u>27.82</u></td><td>19.33</td><td>24.75</td><td>22.20</td><td>28.35</td><td>+0.91</td></tr>
+            <tr><td>SpatialThinker</td><td>35.00</td><td>30.50</td><td>25.25</td><td>30.25</td><td>28.37</td><td>27.75</td><td><u>26.57</u></td><td>26.26</td><td>28.14</td><td>29.20</td><td>+1.76</td></tr>
+            <tr><td>Spatial-SSRL</td><td><b>39.50</b></td><td>29.00</td><td>25.75</td><td>31.42</td><td>28.22</td><td>21.74</td><td>25.30</td><td><u>27.78</u></td><td>26.43</td><td><u>28.93</u></td><td>+1.49</td></tr>
+            <tr class="sub"><td colspan="12">Ours</td></tr>
+            <tr><td>SCoRE (w/o RL)</td><td>34.00</td><td><u>39.33</u></td><td><b>42.50</b></td><td><u>38.61</u></td><td>28.62</td><td>23.91</td><td>19.35</td><td>24.75</td><td>25.80</td><td>32.21</td><td>+4.77</td></tr>
+            <tr class="ours"><td>SCoRE (full)</td><td><u>34.50</u></td><td><b>40.83</b></td><td><b>42.50</b></td><td><b>39.28</b></td><td><u>29.06</u></td><td>27.65</td><td><b>26.64</b></td><td><b>39.39</b></td><td><b>30.50</b></td><td><b>34.89</b></td><td><b>+7.45</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">QA accuracy (%). Bold: best; underlined: second best. Δ: gain over Qwen2.5-VL-7B.</p>
+      <p style="margin-top:1rem">SCoRE has the best average on both benchmarks. Its gains are largest on tasks that need a consistent layout across views: <i>Among</i> and <i>Around</i> on MindCube and multi-step reasoning (MSR) on MMSI-Bench.</p>
+
+      <div class="split" style="margin-top:1rem">
+        <div class="text">
+          <h3>Egocentric vs. allocentric questions</h3>
+          <p>On a 1,000-question subset of ViewSpatial-Bench, SCoRE reaches 42.65%, 4.60 points above Spatial-SSRL. The gain comes mostly from allocentric questions: 46.31%, 11.14 points above the base model, against 2.83 points on egocentric questions.</p>
+        </div>
+        <figure>
+          <div class="plate"><img src="images/SCoRE_viewspatial.png" alt="ViewSpatial-Bench accuracy for egocentric, allocentric and average settings; SCoRE is highest at 37.15, 46.31 and 42.65." width="2080" height="1463" loading="lazy"></div>
+        </figure>
+      </div>
+
+      <div class="split" style="margin-top:1rem">
+        <div class="text">
+          <h3>Beyond multi-view data</h3>
+          <p>Training on multi-view consistency also helps single-image and general spatial tasks. SCoRE reaches 98.00% on What’sUp and raises the average over three out-of-domain benchmarks from 64.32% to 68.57%.</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Model</th><th>What’sUp</th><th>SPAR</th><th>BLINK</th><th>Avg.</th><th>Δ</th></tr></thead>
+            <tbody>
+              <tr><td>Qwen2.5-VL-7B</td><td>90.10</td><td>33.85</td><td>69.00</td><td>64.32</td><td>–</td></tr>
+              <tr><td>SpatialReasoner</td><td>84.20</td><td>33.21</td><td>49.34</td><td>55.58</td><td>−8.74</td></tr>
+              <tr><td>SpatialThinker</td><td>92.30</td><td><u>34.04</u></td><td>65.20</td><td>63.85</td><td>−0.47</td></tr>
+              <tr><td>SCoRE (w/o RL)</td><td><u>97.60</u></td><td>34.10</td><td><u>71.75</u></td><td><u>67.82</u></td><td>+3.50</td></tr>
+              <tr class="ours"><td>SCoRE (full)</td><td><b>98.00</b></td><td><b>35.47</b></td><td><b>72.25</b></td><td><b>68.57</b></td><td><b>+4.25</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="split" style="margin-top:1rem">
+        <div class="text">
+          <h3>MindCube categories</h3>
+          <p>Across the 11 MindCube subcategories, the biggest gains are on agent–object relations (A-O: 44.73% against 23.65% for the base model) and on viewpoint sequences (50.17% against 24.42%). Both require relating objects to an agent and updating those relations as the view changes.</p>
+        </div>
+        <figure>
+          <div class="plate"><img src="images/SCoRE_mindcube_category.jpg" alt="Accuracy of SCoRE, the base model and baselines across 11 MindCube subcategories grouped into object arrangement, perspective taking, relation pattern and viewpoint dynamics." width="2400" height="2106" loading="lazy"></div>
+        </figure>
+      </div>
+
+      <div class="split" style="margin-top:1rem">
+        <div class="text">
+          <h3>Relational consistency</h3>
+          <p>We turn MindCube-Hard into relational questions and check whether all predicted pairwise relations form one coherent layout. SCoRE is best on every metric, and global consistency, the share of samples where every relation is right, rises by 11 points.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Model</th><th>Relation acc.</th><th>Pair cov.</th><th>Global cons.</th></tr></thead>
+              <tbody>
+                <tr><td>Qwen2.5-VL-7B</td><td>48.50</td><td>45.93</td><td>23.00</td></tr>
+                <tr><td>SpatialReasoner</td><td>36.74</td><td>40.33</td><td>19.00</td></tr>
+                <tr><td>SpatialThinker</td><td>50.67</td><td><u>49.40</u></td><td>27.00</td></tr>
+                <tr><td>Spatial-SSRL</td><td><u>51.23</u></td><td>46.37</td><td><u>32.00</u></td></tr>
+                <tr class="ours"><td>SCoRE</td><td><b>52.47</b></td><td><b>50.33</b></td><td><b>34.00</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <figure>
+          <div class="plate"><img src="images/SCoRE_relation_case.jpg" alt="An office seen from three views, and the object layouts reconstructed by each model; SCoRE's layout of the blue bin, monitors and black sofa matches the ground truth, while baselines distort it." width="2400" height="3200" loading="lazy"></div>
+        </figure>
+      </div>
+
+      <h3>Ablations</h3>
+      <div class="pair" style="margin-top:0">
+        <div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Training</th><th>MindCube</th><th>MMSI</th><th>Avg.</th></tr></thead>
+              <tbody>
+                <tr class="sub"><td colspan="4">Single stage</td></tr>
+                <tr><td>Perception SFT only</td><td>34.03</td><td>22.90</td><td>28.47</td></tr>
+                <tr><td>RL only</td><td>30.25</td><td>26.23</td><td>28.24</td></tr>
+                <tr><td>Transformation SFT only</td><td>31.09</td><td>27.84</td><td>29.47</td></tr>
+                <tr class="sub"><td colspan="4">Remove one stage</td></tr>
+                <tr><td>w/o perception SFT</td><td>36.87</td><td><b>31.32</b></td><td><u>34.10</u></td></tr>
+                <tr><td>w/o transformation SFT</td><td>35.76</td><td>30.49</td><td>33.13</td></tr>
+                <tr><td>w/o RL</td><td><u>38.61</u></td><td>25.80</td><td>32.21</td></tr>
+                <tr class="ours"><td>SCoRE (full)</td><td><b>39.28</b></td><td><u>30.50</u></td><td><b>34.89</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top:.8rem">No single stage comes close to the full pipeline. Removing RL costs the most, and removing transformation SFT costs more than removing perception SFT.</p>
+        </div>
+        <div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Reward</th><th class="c">Acc.</th><th class="c">Cons.</th><th class="c">Fmt.</th><th>MindCube</th><th>MMSI</th></tr></thead>
+              <tbody>
+                <tr><td>w/o consistency</td><td class="c">✓</td><td class="c"></td><td class="c">✓</td><td>37.67</td><td>25.90</td></tr>
+                <tr><td>w/o accuracy</td><td class="c"></td><td class="c">✓</td><td class="c">✓</td><td>38.83</td><td>26.90</td></tr>
+                <tr class="ours"><td>Full</td><td class="c">✓</td><td class="c">✓</td><td class="c">✓</td><td><b>39.28</b></td><td><b>30.50</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top:.8rem">Dropping the consistency reward hurts more than dropping the accuracy reward, especially on MMSI-Bench (−4.60 points). Correct answers alone do not teach the model to agree with itself across views.</p>
+        </div>
+      </div>
+
+      <div class="pair">
+        <div>
+          <h3>Checking each reasoning step</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Step</th><th>Accuracy (%)</th></tr></thead>
+              <tbody>
+                <tr><td>Egocentric relation (r<sup>ego</sup>)</td><td>84.5</td></tr>
+                <tr><td>Heading (r<sup>head</sup>)</td><td>81.2</td></tr>
+                <tr><td>Transformation (r<sup>trans</sup>)</td><td>98.9</td></tr>
+                <tr><td>Allocentric relation (r<sup>allo</sup>)</td><td>68.1</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top:.8rem">Given its own egocentric relation and heading, the model almost always composes the right transformed relation (98.9%). The gains come from the transformation itself, not from shortcuts to the final answer.</p>
+        </div>
+        <div>
+          <h3>Without viewpoint labels</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Model</th><th>No V&amp;O</th><th>With V&amp;O</th><th>Noisy V&amp;O</th></tr></thead>
+              <tbody>
+                <tr><td>Qwen2.5-VL-7B</td><td>24.00</td><td>25.00</td><td>25.33</td></tr>
+                <tr><td>SpatialReasoner</td><td>32.33</td><td>29.33</td><td>30.67</td></tr>
+                <tr><td>SpatialThinker</td><td>26.33</td><td>26.00</td><td>28.00</td></tr>
+                <tr><td>VILASR-7B</td><td>22.00</td><td>22.00</td><td>20.00</td></tr>
+                <tr><td>Spatial-SSRL</td><td>29.00</td><td>29.67</td><td>30.00</td></tr>
+                <tr class="ours"><td>SCoRE</td><td><b>39.67</b></td><td><b>35.33</b></td><td><b>34.33</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top:.8rem">On MindCube, SCoRE stays best whether viewpoint and orientation (V&amp;O) labels are given, removed or corrupted. It does best with no labels at all, so it does not depend on them.</p>
+        </div>
+      </div>
+
+      <div class="split" style="margin-top:1rem">
+        <div class="text">
+          <h3>Case study</h3>
+          <p>Asked where the toilet is while using the handwashing area, SCoRE takes the perspective of the person at the sink, links the towel across both images, and answers <i>to my left</i>. Qwen reads the local cues correctly but stays in the camera’s frame and answers <i>to my right</i>.</p>
+        </div>
+        <figure>
+          <div class="plate"><img src="images/SCoRE_case_study.jpg" alt="Two bathroom images with a towel, sink and toilet. SCoRE reasons from the person's facing direction and answers that the toilet is to the left; Qwen answers right." width="2400" height="3104" loading="lazy"></div>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="bibtex">
+    <div class="col">
+      <p class="label">cite</p>
+      <h2>BibTeX</h2>
+      <div class="bib">
+        <button type="button" id="copyBib">copy</button>
+<pre id="bibText">@inproceedings{kim2026score,
+  title     = {Spatial Reasoning in Large Vision-Language Models via
+               Egocentric-to-Allocentric Transformation},
+  author    = {Kim, Yoonji and Kim, Jieun and Cho, Sung-Bae},
+  booktitle = {Findings of the Association for Computational Linguistics:
+               EMNLP 2026},
+  year      = {2026}
+}</pre>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="col">Yonsei University · <a href="../index.html">Jieun Kim</a></div>
+</footer>
+
+<script>
+(function(){
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var vc=document.getElementById('vc'),B=vc.querySelectorAll('.st-steps button'),cap=vc.querySelector('.st-cap'),
+      play=vc.querySelector('.st-play'),N=B.length,stage=0,timer=null,playing=!reduce,visible=false;
+  var CAP=[
+    '<b>Views.</b> Three cameras look at the same park. The question asks about the road from the viewpoint of someone sitting on the bench, not from the camera.',
+    '<b>Egocentric observation.</b> Seen from each camera, the bench and road sit in different places: right and left in V1 and V2, front and behind in V3.',
+    '<b>Without transformation.</b> The base model answers from each camera’s frame and gives three different answers for one scene.',
+    '<b>Transformation.</b> SCoRE finds which way the bench faces, rotates the camera’s relation into the bench’s frame, and reads off the answer.',
+    '<b>Consistent answer.</b> Every view now gives the same answer, front. During GRPO, the consistency reward is highest when all view-wise conclusions agree with the answer.'
+  ];
+  function go(s){
+    stage=s;
+    for(var n=2;n<=N;n++)vc.classList.toggle('on'+n,s>=n);
+    vc.classList.toggle('show-q',s===3||s===4);
+    vc.classList.toggle('show-s',s===5);
+    B.forEach(function(b,i){b.setAttribute('aria-selected',i===s-1?'true':'false')});
+    cap.innerHTML=CAP[s-1];
+  }
+  function schedule(){
+    clearTimeout(timer);
+    if(playing&&visible)timer=setTimeout(function(){go(stage>=N?1:stage+1);schedule()},stage===N?5000:3800);
+  }
+  function setPlaying(v){playing=v;play.textContent=v?'pause':'play';play.setAttribute('aria-pressed',v?'false':'true');schedule()}
+  B.forEach(function(b,i){b.addEventListener('click',function(){go(i+1);setPlaying(false)})});
+  play.addEventListener('click',function(){if(!playing&&stage===N)go(1);setPlaying(!playing)});
+  go(reduce?N:1);setPlaying(playing);
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(e){visible=e[0].isIntersecting;schedule()},{threshold:.4}).observe(vc);
+  }else{visible=true;schedule()}
+
+  var cb=document.getElementById('copyBib'),bt=document.getElementById('bibText');
+  cb.addEventListener('click',function(){
+    var t=bt.innerText,done=function(){cb.textContent='copied';setTimeout(function(){cb.textContent='copy'},1500)};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done)}
+  });
+})();
+</script>
+</body>
+</html>
