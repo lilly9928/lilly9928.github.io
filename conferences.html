@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Jieun Kim">
+  <meta name="description" content="Live deadlines and dates for top AI, vision, and NLP conferences.">
+  <title>Conference Deadlines</title>
+  <link rel="shortcut icon" href="images/hamster-face.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+  <style>
+    :root {
+      --bg: #fffdfa;
+      --text: #2b2622;
+      --muted: #7b7169;
+      --line: #ede6dc;
+      --accent: #8c5a3c;
+      --g: #7a5d3c;  --g-soft: #f4ecdf;
+      --s: #56704d;  --s-soft: #e9efe3;
+      --r: #8a5648;  --r-soft: #f5e8e3;
+      --o: #7b7169;  --o-soft: #f3efe9;
+      --urgent: #b4442f;
+      --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+      --sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+    }
+    html { color-scheme: light; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 17px; line-height: 1.6; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+    p { margin: 0; }
+
+    .wrap { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+    header.wrap { padding-top: 48px; }
+    .back { font-size: 0.92rem; font-weight: 500; }
+    h1 { font-family: var(--serif); font-size: 2.3rem; font-weight: 700; line-height: 1.15; margin: 14px 0 10px; letter-spacing: -0.01em; }
+    .lede { color: var(--muted); max-width: 64ch; }
+    .meta { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.88rem; margin-top: 12px; }
+    .dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: #d8cdbf; }
+    .meta.live .dot { background: var(--s); }
+    .meta.stale .dot { background: #c49a6c; }
+    .meta.error .dot { background: var(--urgent); }
+
+    section { margin-top: 44px; }
+    h2 { font-family: var(--serif); font-size: 1.5rem; font-weight: 600; margin: 0 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+
+    /* Filters (same pattern as index.html) */
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+    .filters button { font: inherit; font-size: 0.92rem; padding: 5px 14px; border: 1px solid var(--line); border-radius: 999px; background: #ffffff; color: var(--text); cursor: pointer; white-space: nowrap; }
+    .filters button[aria-pressed="true"] { color: #ffffff; border-color: transparent; }
+    .filters button[data-filter="all"][aria-pressed="true"] { background: var(--text); }
+    .filters button.g[aria-pressed="true"] { background: var(--g); }
+    .filters button.s[aria-pressed="true"] { background: var(--s); }
+    .filters button.r[aria-pressed="true"] { background: var(--r); }
+    .filters button.o[aria-pressed="true"] { background: var(--o); }
+
+    /* Conference rows */
+    .conf { display: grid; grid-template-columns: 1fr 190px; gap: 8px 24px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+    .list .conf:last-child { border-bottom: 0; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+    .tag, .status { font-size: 0.78rem; font-weight: 600; padding: 1px 8px; border-radius: 4px; line-height: 1.6; }
+    .tag.g { background: var(--g-soft); color: var(--g); }
+    .tag.s { background: var(--s-soft); color: var(--s); }
+    .tag.r { background: var(--r-soft); color: var(--r); }
+    .tag.o { background: var(--o-soft); color: var(--o); }
+    .status { color: var(--muted); border: 1px dashed #d8cdbf; }
+    .cname { font-weight: 600; font-size: 1.12rem; line-height: 1.35; }
+    .cname a { color: var(--text); }
+    .full { color: var(--muted); font-size: 0.92rem; }
+    .where { font-size: 0.95rem; margin-top: 6px; }
+    .steps { list-style: none; margin: 8px 0 0; padding: 0; font-size: 0.92rem; }
+    .steps li { display: grid; grid-template-columns: 96px 1fr; gap: 8px; padding: 1px 0; }
+    .steps .lbl { color: var(--muted); }
+    .steps .done { color: var(--muted); text-decoration: line-through; text-decoration-color: #cfc4b6; }
+    .steps .local, .steps .cmt { color: var(--muted); }
+    .note { color: var(--muted); font-size: 0.88rem; margin-top: 6px; }
+
+    .count { text-align: right; align-self: center; }
+    .count .num { font-family: var(--serif); font-size: 1.9rem; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+    .count .unit { color: var(--muted); font-size: 0.85rem; font-family: var(--sans); font-weight: 400; }
+    .count .clock { color: var(--muted); font-size: 0.88rem; font-variant-numeric: tabular-nums; }
+    .count.soon .num { color: var(--accent); }
+    .count.urgent .num { color: var(--urgent); }
+    .count.est .num { color: var(--muted); }
+    .count .now { font-size: 1.2rem; }
+
+    .empty { color: var(--muted); padding: 12px 0; }
+
+    footer { margin-top: 64px; padding: 16px 0 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; text-align: center; }
+
+    @media (max-width: 640px) {
+      .wrap { padding: 0 16px; }
+      header.wrap { padding-top: 28px; }
+      h1 { font-size: 1.9rem; }
+      .conf { grid-template-columns: 1fr; }
+      .count { text-align: left; order: -1; display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+      .count .num { font-size: 1.5rem; }
+      .steps li { grid-template-columns: 84px 1fr; }
+      .filters { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; margin-right: -16px; padding-right: 16px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="wrap">
+    <a class="back" href="index.html">&larr; Jieun Kim</a>
+    <h1>Conference Deadlines</h1>
+    <p class="lede">Live submission deadlines and meeting dates for the venues I follow in vision, machine learning, and NLP. Times are shown in the official timezone and in your local time.</p>
+    <p class="meta" id="meta"><span class="dot"></span><span id="meta-text">Loading the latest dates…</span></p>
+
+    <div class="filters" role="group" aria-label="Filter by area">
+      <button type="button" data-filter="all" aria-pressed="true">All</button>
+      <button type="button" class="g" data-filter="cv" aria-pressed="false">Vision</button>
+      <button type="button" class="s" data-filter="ml" aria-pressed="false">ML</button>
+      <button type="button" class="r" data-filter="nlp" aria-pressed="false">NLP</button>
+      <button type="button" class="o" data-filter="ai" aria-pressed="false">AI</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section>
+      <h2>Open calls</h2>
+      <div class="list" id="open"><p class="empty">Loading…</p></div>
+    </section>
+
+    <section>
+      <h2>Under review &amp; upcoming meetings</h2>
+      <div class="list" id="upcoming"><p class="empty">Loading…</p></div>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    Data from the community-maintained <a href="https://github.com/ccfddl/ccf-deadlines" target="_blank" rel="noopener">ccfddl/ccf-deadlines</a>, fetched live.
+    Estimated dates are projected from the previous edition until the official ones are posted.
+  </footer>
+
+  <script>
+    // ---------------------------------------------------------------------
+    // Venues to track. `file` is the YAML name in ccfddl/ccf-deadlines
+    // (https://github.com/ccfddl/ccf-deadlines/tree/main/conference).
+    // `dir` defaults to "AI". `area`: cv | ml | nlp | ai.
+    // ---------------------------------------------------------------------
+    const WATCH = [
+      { file: "cvpr",  area: "cv" },
+      { file: "iccv",  area: "cv" },
+      { file: "eccv",  area: "cv" },
+      { file: "wacv",  area: "cv" },
+      { file: "nips",  area: "ml" },
+      { file: "icml",  area: "ml" },
+      { file: "iclr",  area: "ml" },
+      { file: "acl",   area: "nlp" },
+      { file: "emnlp", area: "nlp" },
+      { file: "naacl", area: "nlp" },
+      { file: "colm",  area: "nlp" },
+      { file: "aaai",  area: "ai" },
+      { file: "ijcai", area: "ai" },
+    ];
+    const SOURCE = "https://raw.githubusercontent.com/ccfddl/ccf-deadlines/main/conference/";
+    const CACHE_KEY = "conf-deadlines-cache-v1";
+
+    // ---------------------------------------------------------------------
+    const AREA = { cv: ["g", "Vision"], ml: ["s", "ML"], nlp: ["r", "NLP"], ai: ["o", "AI"] };
+    const DAY = 86400000;
+    const MONTHS = { jan: 0, january: 0, feb: 1, february: 1, mar: 2, march: 2, apr: 3, april: 3, may: 4,
+      jun: 5, june: 5, jul: 6, july: 6, aug: 7, august: 7, sep: 8, sept: 8, september: 8,
+      oct: 9, october: 9, nov: 10, november: 10, dec: 11, december: 11 };
+
+    const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const fmtDate = (d, opts) => d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", ...opts });
+
+    // ---- Parsing ccfddl entries -------------------------------------------
+
+    // "AoE" -> -720, "UTC-8" -> -480, "UTC+0" -> 0 (minutes).
+    function tzOffset(tz) {
+      if (!tz || /aoe/i.test(tz)) return -720;
+      const m = String(tz).match(/UTC\s*([+-])\s*(\d{1,2})(?::?(\d\d))?/i);
+      if (!m) return /^utc$/i.test(tz) ? 0 : -720;
+      return (m[1] === "-" ? -1 : 1) * (Number(m[2]) * 60 + Number(m[3] || 0));
+    }
+
+    // "2026-11-16 23:59:00" in the given offset -> epoch ms (null for TBD).
+    function toTime(value, offset) {
+      const m = String(value || "").match(/^(\d{4})-(\d\d)-(\d\d)(?:[ T](\d\d):(\d\d)(?::(\d\d))?)?/);
+      if (!m) return null;
+      const utc = Date.UTC(+m[1], +m[2] - 1, +m[3], +(m[4] || 23), +(m[5] || 59), +(m[6] || 59));
+      return utc - offset * 60000;
+    }
+
+    // Best effort for strings like "June 20-25, 2027", "Jan 4 - 8, 2027",
+    // "April 30-May 2, 2025", "December 8-10 (Sydney), December 9-11 (...), 2026".
+    function parseMeeting(str) {
+      if (!str) return null;
+      const years = String(str).match(/\b20\d\d\b/g);
+      if (!years) return null;
+      const year = Number(years[years.length - 1]);
+      const re = /([A-Za-z]+)|(\d{1,2})(?!\d)/g;
+      const points = [];
+      let month = null, m;
+      const text = String(str).replace(/\b20\d\d\b/g, " ");
+      while ((m = re.exec(text))) {
+        if (m[1]) { const k = m[1].toLowerCase(); if (k in MONTHS) month = MONTHS[k]; }
+        else if (month !== null && +m[2] >= 1 && +m[2] <= 31) points.push([month, +m[2]]);
+      }
+      if (!points.length) return null;
+      const [sm, sd] = points[0], [em, ed] = points[points.length - 1];
+      return { start: new Date(em < sm ? year - 1 : year, sm, sd), end: new Date(year, em, ed) };
+    }
+
+    function stepsOf(edition) {
+      const off = tzOffset(edition.timezone);
+      const seen = new Set(), out = [];
+      for (const t of edition.timeline || []) {
+        const paper = /commit/i.test(t.comment || "") ? "Commitment" : "Paper";
+        let comment = t.comment || "";   // shown once, on the first milestone of its group
+        for (const [key, label, info] of [["abstract_deadline", "Abstract"], ["deadline", paper],
+                                          ["rebuttal_deadline", "Rebuttal", true], ["decision_deadline", "Decision", true]]) {
+          const at = toTime(t[key], off);
+          if (at === null || seen.has(label + at)) continue;
+          seen.add(label + at);
+          out.push({ label, at, info: !!info, comment, tz: edition.timezone || "AoE", off });
+          comment = "";
+        }
+      }
+      return out.sort((a, b) => a.at - b.at);
+    }
+
+    const submissionSteps = (steps) => steps.filter((s) => !s.info);
+    const nextDeadline = (steps, now) => steps.find((s) => !s.info && s.at > now);
+    const shiftYears = (ms, n) => { const d = new Date(ms); d.setUTCFullYear(d.getUTCFullYear() + n); return d.getTime(); };
+
+    // Turn one ccfddl conference into the cards to show:
+    //   open:     the edition with a future submission deadline, or an
+    //             estimate for the next edition projected from the last one.
+    //   meetings: editions whose deadlines have passed but which haven't ended.
+    function itemsFor(watch, conf, now) {
+      const eds = (conf.confs || []).map((e) => ({
+        year: Number(e.year), link: e.link, place: e.place, dateStr: e.date,
+        meeting: parseMeeting(e.date), steps: stepsOf(e),
+      })).sort((a, b) => a.year - b.year);
+      const base = { watch, title: conf.title, full: conf.description };
+      const open = [], meetings = [];
+
+      for (const e of eds) {
+        const ended = e.meeting && e.meeting.end.getTime() + DAY <= now;
+        if (nextDeadline(e.steps, now)) open.push({ ...base, ed: e, steps: e.steps });
+        else if (submissionSteps(e.steps).length && !ended && e.meeting) meetings.push({ ...base, ed: e, steps: e.steps });
+      }
+
+      if (!open.length) {
+        const ref = [...eds].reverse().find((e) => submissionSteps(e.steps).length);
+        if (ref) {
+          // An announced edition without deadlines yet (e.g. "deadline: TBD").
+          const announced = eds.find((e) => e.year > ref.year && !submissionSteps(e.steps).length);
+          const prev = [...eds].reverse().find((e) => e.year < ref.year);
+          const gap = announced ? announced.year - ref.year : (prev ? Math.min(ref.year - prev.year, 2) : 1) || 1;
+          let shift = gap;
+          const subs = submissionSteps(ref.steps);
+          while (shiftYears(subs[subs.length - 1].at, shift) <= now && shift < 10) shift += gap;
+          // Drop comments that mention specific dates from the old edition.
+          const steps = subs.map((s) => ({ ...s, at: shiftYears(s.at, shift), comment: /\b20\d\d\b/.test(s.comment) ? "" : s.comment }));
+          const ed = announced && announced.year === ref.year + shift ? announced : {
+            year: ref.year + shift, link: ref.link, place: null,
+            meeting: ref.meeting && { start: new Date(shiftYears(ref.meeting.start, shift)), end: new Date(shiftYears(ref.meeting.end, shift)) },
+            estMeeting: true,
+          };
+          open.push({ ...base, ed, steps, estimated: ref.year });
+        }
+      }
+      return { open, meetings };
+    }
+
+    // ---- Rendering --------------------------------------------------------
+
+    function officialTime(s) {
+      const d = new Date(s.at + s.off * 60000);
+      return d.toLocaleString("en-US", { timeZone: "UTC", month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }) + " " + s.tz;
+    }
+    const localTime = (s) => new Date(s.at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZoneName: "short" });
+
+    function fmtMeeting(ed) {
+      if (!ed.meeting) return ed.dateStr || "Dates TBA";
+      const { start: a, end: b } = ed.meeting;
+      const mo = (d) => d.toLocaleString("en-US", { month: "short" });
+      let s;
+      if (a.getFullYear() !== b.getFullYear()) s = `${fmtDate(a)} – ${fmtDate(b)}`;
+      else if (a.getMonth() !== b.getMonth()) s = `${mo(a)} ${a.getDate()} – ${mo(b)} ${b.getDate()}, ${b.getFullYear()}`;
+      else if (a.getDate() === b.getDate()) s = fmtDate(a);
+      else s = `${mo(a)} ${a.getDate()}–${b.getDate()}, ${a.getFullYear()}`;
+      return ed.estMeeting ? `Around ${a.toLocaleString("en-US", { month: "long", year: "numeric" })}` : s;
+    }
+
+    const daysUnit = (n) => `<span class="unit"> ${n === 1 ? "day" : "days"}</span>`;
+
+    function clock(ms) {
+      const pad = (n) => String(n).padStart(2, "0");
+      return `${pad(Math.floor((ms % DAY) / 3600000))}:${pad(Math.floor((ms % 3600000) / 60000))}:${pad(Math.floor((ms % 60000) / 1000))}`;
+    }
+
+    function countdownHTML(item, now, bucket) {
+      if (bucket === "open") {
+        const s = nextDeadline(item.steps, now);
+        const ms = s.at - now, days = Math.floor(ms / DAY);
+        if (item.estimated) {
+          return `<div class="count est"><div class="num">~${days}${daysUnit(days)}</div><div class="unit">until ${esc(s.label.toLowerCase())} (est.)</div></div>`;
+        }
+        const cls = days < 7 ? "urgent" : days < 30 ? "soon" : "";
+        return `<div class="count ${cls}" data-at="${s.at}"><div class="num"><span class="days">${days}</span><span class="unit"> days</span></div><div class="clock">${clock(ms)}</div><div class="unit">until ${esc(s.label.toLowerCase())}</div></div>`;
+      }
+      const s = item.steps.find((x) => x.at > now);
+      if (s) {
+        const n = Math.ceil((s.at - now) / DAY);
+        return `<div class="count"><div class="num">${n}${daysUnit(n)}</div><div class="unit">until ${esc(s.label.toLowerCase())}</div></div>`;
+      }
+      const start = item.ed.meeting.start.getTime();
+      if (start > now) {
+        const n = Math.ceil((start - now) / DAY);
+        return `<div class="count"><div class="num">${n}${daysUnit(n)}</div><div class="unit">until conference</div></div>`;
+      }
+      return `<div class="count soon"><div class="num now">Happening now</div></div>`;
+    }
+
+    function rowHTML(item, now, bucket) {
+      const [cls, label] = AREA[item.watch.area];
+      const ed = item.ed;
+      const status = item.estimated ? `<span class="status">Estimated</span>` : "";
+      const steps = item.steps.map((s) => {
+        const done = s.at <= now;
+        const when = item.estimated
+          ? `≈ ${fmtDate(new Date(s.at + s.off * 60000), { timeZone: "UTC" })}`
+          : esc(officialTime(s)) + (done ? "" : ` <span class="local">· ${esc(localTime(s))}</span>`);
+        const cmt = s.comment ? ` <span class="cmt">— ${esc(s.comment)}</span>` : "";
+        return `<li><span class="lbl">${esc(s.label)}</span><span class="${done ? "done" : ""}">${when}${cmt}</span></li>`;
+      }).join("");
+      const note = item.estimated
+        ? `<p class="note">Not announced yet. Projected from the ${item.estimated} edition; updates automatically once posted.</p>` : "";
+      const src = `${SOURCE}${item.watch.dir || "AI"}/${item.watch.file}.yml`.replace("raw.githubusercontent.com", "github.com").replace("/main/", "/blob/main/");
+      return `<article class="conf" data-area="${item.watch.area}">
+        <div>
+          <div class="tags"><span class="tag ${cls}">${label}</span>${status}</div>
+          <div class="cname"><a href="${esc(ed.link || src)}" target="_blank" rel="noopener">${esc(item.title)} ${ed.year}</a></div>
+          <div class="full">${esc(item.full || "")}</div>
+          <div class="where">${esc(fmtMeeting(ed))} · ${esc(ed.place || "Location TBA")}</div>
+          ${steps ? `<ul class="steps">${steps}</ul>` : ""}
+          ${note}
+        </div>
+        ${countdownHTML(item, now, bucket)}
+      </article>`;
+    }
+
+    let confs = [];      // [{ watch, conf }]
+    let filter = "all";
+
+    function render() {
+      const now = Date.now();
+      const open = [], upcoming = [];
+      for (const { watch, conf } of confs) {
+        if (filter !== "all" && watch.area !== filter) continue;
+        const r = itemsFor(watch, conf, now);
+        open.push(...r.open);
+        upcoming.push(...r.meetings);
+      }
+      open.sort((a, b) => nextDeadline(a.steps, now).at - nextDeadline(b.steps, now).at);
+      upcoming.sort((a, b) => a.ed.meeting.start - b.ed.meeting.start);
+
+      const fill = (id, items, bucket) => {
+        document.getElementById(id).innerHTML = items.length
+          ? items.map((it) => rowHTML(it, now, bucket)).join("")
+          : `<p class="empty">Nothing here right now.</p>`;
+      };
+      fill("open", open, "open");
+      fill("upcoming", upcoming, "upcoming");
+    }
+
+    // ---- Loading ----------------------------------------------------------
+
+    function setMeta(state, text) {
+      document.getElementById("meta").className = "meta " + state;
+      document.getElementById("meta-text").textContent = text;
+    }
+
+    function readCache() {
+      try { return JSON.parse(localStorage.getItem(CACHE_KEY)) || {}; } catch (e) { return {}; }
+    }
+    function writeCache(cache) {
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify(cache)); } catch (e) { /* storage unavailable */ }
+    }
+
+    function useTexts(texts) {
+      confs = [];
+      for (const watch of WATCH) {
+        const text = texts[watch.file];
+        if (!text) continue;
+        try {
+          const doc = jsyaml.load(text, { schema: jsyaml.CORE_SCHEMA });
+          const conf = Array.isArray(doc) ? doc[0] : doc;
+          if (conf) confs.push({ watch, conf });
+        } catch (e) { console.warn("Could not parse", watch.file, e); }
+      }
+      render();
+    }
+
+    async function load() {
+      const cache = readCache();
+      const cachedTexts = Object.fromEntries(Object.entries(cache).map(([k, v]) => [k, v.text]));
+      if (Object.keys(cachedTexts).length) useTexts(cachedTexts);
+
+      const results = await Promise.allSettled(WATCH.map(async (w) => {
+        const res = await fetch(`${SOURCE}${w.dir || "AI"}/${w.file}.yml`, { cache: "no-cache" });
+        if (!res.ok) throw new Error(res.status);
+        return [w.file, await res.text()];
+      }));
+
+      const texts = { ...cachedTexts };
+      const fetchedAt = Date.now();
+      let failed = 0;
+      results.forEach((r, i) => {
+        if (r.status === "fulfilled") {
+          texts[r.value[0]] = r.value[1];
+          cache[r.value[0]] = { text: r.value[1], at: fetchedAt };
+        } else failed++;
+      });
+      writeCache(cache);
+      useTexts(texts);
+
+      const time = new Date(fetchedAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+      if (failed === 0) setMeta("live", `Live · updated ${time}`);
+      else if (failed < WATCH.length) setMeta("stale", `Updated ${time} · ${failed} venue(s) couldn't be reached, showing saved data`);
+      else if (Object.keys(cachedTexts).length) {
+        const oldest = Math.min(...Object.values(cache).map((v) => v.at));
+        setMeta("stale", `Offline · showing data saved ${fmtDate(new Date(oldest))}`);
+      } else {
+        setMeta("error", "Couldn't reach the deadline source. Try reloading in a moment.");
+        document.getElementById("open").innerHTML = document.getElementById("upcoming").innerHTML =
+          `<p class="empty">No data available.</p>`;
+      }
+    }
+
+    document.querySelectorAll(".filters button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        filter = btn.dataset.filter;
+        document.querySelectorAll(".filters button").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+        render();
+      });
+    });
+
+    // Update the running clocks every second; re-render fully when a deadline passes.
+    function tick() {
+      const now = Date.now();
+      for (const el of document.querySelectorAll(".count[data-at]")) {
+        const ms = Number(el.dataset.at) - now;
+        if (ms <= 0) return render();
+        el.querySelector(".days").textContent = Math.floor(ms / DAY);
+        el.querySelector(".clock").textContent = clock(ms);
+      }
+    }
+
+    if (window.jsyaml) load();
+    else setMeta("error", "Couldn't load the YAML parser. Try reloading.");
+    setInterval(tick, 1000);
+    setInterval(render, 10 * 60000);
+    setInterval(load, 6 * 3600000);
+  </script>
+</body>
+</html>
